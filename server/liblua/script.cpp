@@ -42,7 +42,7 @@ void Script::setState(lua_State* pState){
 	// open rapidjson
 	luaopen_rapidjson(m_pState);
 	// open eproto
-	luaopen_eproto_cpp(m_pState);
+	luaopen_eproto(m_pState);
 	// open my lua lib
 	tolua_liblua_open(m_pState);
 	// extend libs

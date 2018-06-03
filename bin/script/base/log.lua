@@ -21,7 +21,7 @@ local getTimeStringUS = getTimeStringUS
 local writeLog = writeLog
 local g_pNode = g_pNode
 
-local dump = require("dump")
+local rapidjson = require("rapidjson")
 
 local log = {}
 rawset(_G, "log", log)
@@ -74,8 +74,9 @@ local log_tostring = function(...)
 	for i = 1, select('#', ...) do
 		local x = select(i, ...)
 		if type(x) == "table" then
-			x = dump(x, 10, true, nil)
-			x = "\n"..x.."\n"
+--			x = dump(x, 10, true, nil)
+--			x = "\n"..x.."\n"
+			x = rapidjson.encode(x)
 		end
 		t[#t + 1] = tostring(x)
 	end

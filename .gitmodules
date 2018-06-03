@@ -1,0 +1,6 @@
+[submodule "third/jemalloc"]
+	path = third/jemalloc
+	url = git@github.com:jemalloc/jemalloc.git
+[submodule "third/LuaJIT"]
+	path = third/LuaJIT
+	url = https://github.com/LuaJIT/LuaJIT.git

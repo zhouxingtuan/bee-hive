@@ -9,7 +9,6 @@
 require("protobuf")
 require("util")
 require("dump")
-require("eproto")
 
 require("log")
 
