@@ -1,0 +1,14 @@
+
+
+class Accept
+{
+	inline const char* getIP(void) const { return m_ip; }
+	inline const uint16 getPort(void) const { return m_port; }
+	unsigned char getType(void) const { return m_connType; }
+	uint32 getHandle(void) const;
+	void epollRemove(void);
+
+	inline void setBindNodeID(uint32 nodeID){ m_bindNodeID = nodeID; }
+	inline uint32 getBindNodeID(void) const { return m_bindNodeID; }
+};
+

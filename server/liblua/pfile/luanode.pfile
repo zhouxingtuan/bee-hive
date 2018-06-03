@@ -1,0 +1,29 @@
+
+const char* getTimeStringUS(void);
+void writeLog(const char* fileName, const char* str);
+
+class LuaNode : public Node
+{
+	DBRedis* createRedis(void);
+	bool removeRedis(DBRedis* pDBRedis);
+
+	DBMysql* createMysql(void);
+	bool removeMysql(DBMysql* pDBMysql);
+
+	MD5* createMD5(void);
+	bool removeMD5(MD5* pMD5);
+
+	HiveKV* createHiveKV(void);
+	bool removeHiveKV(HiveKV* pHiveKV);
+
+	HiveBlock* createHiveBlock(void);
+	bool removeHiveBlock(HiveBlock* pHiveBlock);
+
+	HiveArray* createHiveArray(void);
+	bool removeHiveArray(HiveArray* pHiveArray);
+
+	HiveMap* createHiveMap(void);
+	bool removeHiveMap(HiveMap* pHiveMap);
+
+};
+

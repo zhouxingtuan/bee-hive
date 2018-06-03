@@ -1,0 +1,10 @@
+
+class HiveMap
+{
+	bool openDB(const char* name);
+	void closeDB();
+
+	bool set(const char* key, uint64 length, int64 value);
+	bool setn(const char* key, uint64 length, int64 value);
+	bool replace(const char* key, uint64 length, const char* newKey, uint64 newLength);
+};

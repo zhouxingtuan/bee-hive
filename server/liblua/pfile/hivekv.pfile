@@ -1,0 +1,11 @@
+
+class HiveKV
+{
+	bool openDB(const char* name);
+	void closeDB();
+
+	bool set(const char* key, uint32 keyLength, const char* value, uint32 valueLength);
+	bool setn(const char* key, uint32 keyLen, const char* value, uint32 valueLen);
+	bool del(const char* key, uint32 keyLen);
+	bool replace(const char* key, uint32 length, const char* newKey, uint32 newLength);
+};

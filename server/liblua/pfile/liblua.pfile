@@ -1,0 +1,25 @@
+$#include "core.h"
+$#include "manual.hpp"
+
+$pfile "node.pfile"
+
+$pfile "accept.pfile"
+
+$pfile "http.pfile"
+
+$pfile "md5.pfile"
+
+$pfile "dbmysql.pfile"
+
+$pfile "dbredis.pfile"
+
+$pfile "hivekv.pfile"
+
+$pfile "hiveblock.pfile"
+
+$pfile "hivearray.pfile"
+
+$pfile "hivemap.pfile"
+
+$pfile "luanode.pfile"
+

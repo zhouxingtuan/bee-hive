@@ -1,0 +1,18 @@
+
+
+class Http
+{
+	inline const char* getIP(void) const { return m_ip; }
+	inline const uint16 getPort(void) const { return m_port; }
+	unsigned char getType(void) const { return m_connType; }
+	uint32 getHandle(void) const;
+	void epollRemove(void);
+
+	void responseRequest(const char* ptr, uint32 length);	// 返回请求字符串
+	void responseBegin(uint32 length);
+	void responseAppend(const char* ptr, uint32 length);    // 追加一个请求字符串
+	void responseEnd(void);
+	bool responseBody(const char* bodyPtr, uint32 bodyLength);
+};
+
+

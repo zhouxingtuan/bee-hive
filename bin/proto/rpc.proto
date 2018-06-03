@@ -1,0 +1,10 @@
+
+package rpc;
+
+message rpc_push{
+	optional int32 cmd = 1;
+	repeated bytes buffer = 2;
+};
+message rpc_empty{
+
+};

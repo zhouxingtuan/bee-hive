@@ -1,0 +1,9 @@
+
+class HiveBlock
+{
+	bool openDB(const char* name, uint64 minIndex, uint64 maxIndex);
+	void closeDB();
+
+	bool set(uint64 index, const char* ptr, int64 length);
+	bool del(uint64 index);
+};

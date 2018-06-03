@@ -1,0 +1,8 @@
+
+class HiveArray
+{
+	bool openDB(const char* name);
+	void closeDB();
+
+	bool set(uint64 index, int64 value);
+};
