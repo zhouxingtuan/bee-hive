@@ -79,8 +79,8 @@ public:
 
 	// from EpollObject
 	virtual bool epollActive(uint32 events);
-	virtual void epollIn(void);
-	virtual void epollOut(void);
+	virtual bool epollIn(void);
+	virtual bool epollOut(void);
 	virtual void epollRemove(void);
 	virtual void epollCheck(void);
 

@@ -201,11 +201,15 @@ bool Http::epollActive(uint32 events){
 	}
 	if(events & EPOLLIN){
 		this->setState(HTTP_STATE_READ);
-		this->epollIn();
+		if( !this->epollIn() ){
+			return true;
+		}
 	}
 	if(events & EPOLLOUT){
 		this->setState(HTTP_STATE_WRITE);
-		this->epollOut();
+		if( !this->epollOut() ){
+			return true;
+		}
 	}else if(events & EPOLLERR){
 		LOG_DEBUG("EPOLLERR");
 		this->epollRemove();	// main主线程，在这里检查删除
@@ -213,7 +217,7 @@ bool Http::epollActive(uint32 events){
 	}
 	return true;
 }
-void Http::epollIn(void){
+bool Http::epollIn(void){
 	int result;
 	size_t nparsed;
 	int parse_size;
@@ -255,9 +259,11 @@ void Http::epollIn(void){
 	if( this->getState() >= HTTP_STATE_WRITE_DONE ){
 		LOG_DEBUG("state=%d >= HTTP_STATE_WRITE_DONE=%d", getState(), HTTP_STATE_WRITE_DONE);
 		this->epollRemove();
+		return false;
 	}
+	return true;
 }
-void Http::epollOut(void){
+bool Http::epollOut(void){
 	int result;
 	do{
 		result = writeSocket();
@@ -278,7 +284,9 @@ void Http::epollOut(void){
 	if( this->getState() >= HTTP_STATE_WRITE_DONE ){
 		LOG_DEBUG("state=%d >= HTTP_STATE_WRITE_DONE=%d", getState(), HTTP_STATE_WRITE_DONE);
 		this->epollRemove();
+		return false;
 	}
+	return true;
 }
 void Http::epollRemove(void){
 	LOG_DEBUG("handle=%d", this->getHandle());

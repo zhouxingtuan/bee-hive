@@ -103,16 +103,18 @@ Accept::~Accept(void){
 bool Accept::epollActive(uint32 events){
 	return false;
 }
-void Accept::epollIn(void){
+bool Accept::epollIn(void){
 	int result;
 	do{
 		result = readSocket();
 	}while(result == 0);
 	if( result < 0 ){
 		epollRemove();
+		return false;
 	}
+	return true;
 }
-void Accept::epollOut(void){
+bool Accept::epollOut(void){
 	Packet* pPacket;
 	int result;
 	do{
@@ -123,14 +125,14 @@ void Accept::epollOut(void){
 		}
 		if( NULL == pPacket ){
 			//getEpoll()->objectChange(this, EPOLLIN);
-			return;
+			return true;
 		}
 		result = writeSocket(pPacket);
 		if( result < 0 ){
 		    LOG_ERROR("writeSocket result < 0 remove client");
 			pPacket->release();		// 释放
 			epollRemove();
-			return;
+			return false;
 		}
 		// result == 0 成功写 || result > 0 需要重新尝试写
 		if(pPacket->isCursorEnd()){
@@ -138,9 +140,10 @@ void Accept::epollOut(void){
 		}else{
 			// 没写完就说明写入buffer已经满了，等待下一次写操作
 			m_packetQueue.push_front(pPacket);
-			return;
+			return true;
 		}
 	}while(1);
+	return true;
 }
 void Accept::epollRemove(void){
 	if(getSocketFD() > 0){

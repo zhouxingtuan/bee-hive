@@ -32,11 +32,13 @@ size_t EasyCurl::writeCallback(void *ptr, size_t size, size_t nmemb, void *data)
 bool EasyCurl::epollActive(uint32 events){
 	return false;
 }
-void EasyCurl::epollIn(void){
+bool EasyCurl::epollIn(void){
 	getMultiCurl()->onCurlEpollIn(this);
+	return true;
 }
-void EasyCurl::epollOut(void){
+bool EasyCurl::epollOut(void){
 	getMultiCurl()->onCurlEpollOut(this);
+	return true;
 }
 void EasyCurl::epollRemove(void){
 	if(0 != m_fd){

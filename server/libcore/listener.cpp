@@ -42,11 +42,11 @@ bool Listener::epollActive(uint32 events){
 	}
 	return true;
 }
-void Listener::epollIn(void){
-
+bool Listener::epollIn(void){
+	return true;
 }
-void Listener::epollOut(void){
-
+bool Listener::epollOut(void){
+	return true;
 }
 void Listener::epollRemove(void){
 	LOG_DEBUG("handle=%d\n", this->getHandle());
