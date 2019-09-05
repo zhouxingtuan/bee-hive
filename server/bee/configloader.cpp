@@ -99,8 +99,8 @@ void loadConfig(Token::TokenMap& config){
 	pBeeHandler->setModuleName(module_name);
 	pBeeHandler->setModuleParam(module_param);
 	pBeeHandler->setLogFile(log_file);
-	MainWorker::getInstance()->setKey("53598b87744db4cabe54ba4368eff747");
-	MainWorker::getInstance()->setPassword("22f100df9695ecaefd26e6a357eebf7f");
+	MainWorker::getInstance()->setKey("d27796b6bcfb584ee678c7f74782d461");
+	MainWorker::getInstance()->setPassword("775b26b9c439ae11d878d7b637e83a18");
 
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST, onCommandBroadcast);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_ERROR, onCommandDispatchByHandle);
