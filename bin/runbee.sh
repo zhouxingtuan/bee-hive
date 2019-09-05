@@ -16,4 +16,6 @@ sleep 1
 
 sleep 1
 
+./bee test2.ini
+
 ps -aux | grep bee
