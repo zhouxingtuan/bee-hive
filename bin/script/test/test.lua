@@ -20,12 +20,15 @@ rpc:addListener(test)
 
 function test:onInitialize(pNode, param)
 	self.m_pNode = pNode
+	log_debug("onInitialize call once on init only")
 
 end
 function test:onRegister()
+	log_debug("onRegister call on init or update")
 
 end
 function test:onCloseConnect(pAccept, connType, connHandle)
+	log_debug("onCloseConnect connType", connType, "connHandle", connHandle)
 
 end
 function test:onRouteRequest(uid, msgID)
