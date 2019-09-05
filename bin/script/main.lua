@@ -70,14 +70,14 @@ local initEnvironment = function()
 		package.path = package.path .. "./"..p.."/?.lua;"
 		package.cpath = package.cpath .. "./"..p.."/?.so;"
 	end
-	local log = require("log")
-	error_function = log_error
 	for _,p in ipairs(base_path) do
 		p = "script."..p..".init"
 		require(p)
 	end
+	local log = require("log")
 	log.level = config.logLevel or "trace"
 	log.maxFileSize = config.maxFileSize or log.maxFileSize
+	error_function = log_error
 	rpc = require("rpc")
 end
 
