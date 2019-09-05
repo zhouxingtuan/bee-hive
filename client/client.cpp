@@ -141,7 +141,6 @@ Packet::~Packet(void){
 }
 void Packet::convertHead(void){
     PacketHead* pHead = getHead();
-    fprintf(stderr, "convertHead length=%d command=%d", pHead->length, pHead->command);
     pHead->length = htonl(pHead->length);
     pHead->command = htonl(pHead->command);
     pHead->callback = htonl(pHead->callback);
@@ -149,11 +148,9 @@ void Packet::convertHead(void){
     pHead->source = htonl(pHead->source.getHandle());
     pHead->message = htonl(pHead->message);
     pHead->uid = htonl(pHead->uid);
-    fprintf(stderr, "convertHead length=%d command=%d", pHead->length, pHead->command);
 }
 void Packet::reverseHead(void){
     PacketHead* pHead = getHead();
-    fprintf(stderr, "reverseHead length=%d command=%d", pHead->length, pHead->command);
     pHead->length = ntohl(pHead->length);
     pHead->command = ntohl(pHead->command);
     pHead->callback = ntohl(pHead->callback);
@@ -161,7 +158,6 @@ void Packet::reverseHead(void){
     pHead->source = ntohl(pHead->source.getHandle());
     pHead->message = ntohl(pHead->message);
     pHead->uid = ntohl(pHead->uid);
-    fprintf(stderr, "reverseHead length=%d command=%d", pHead->length, pHead->command);
 }
 /*--------------------------------------------------------------------*/
 int GetLastSocketError()
