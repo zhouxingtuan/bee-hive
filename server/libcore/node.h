@@ -39,16 +39,13 @@ public:
     int64 getTimerLeft(uint32 handle);									    // 获取计时器剩余时间
 
 	bool sendPacket(Packet* pPacket);
-
-	bool pushUser(uint32 desID, uint32 message, uint32 uid, const char* ptr, uint32 length);
-	bool broadcastOnline(uint32 message, uint32 uid, const char* ptr, uint32 length);
 	bool broadcast(uint32 desType, uint32 message, uint32 uid, const char* ptr, uint32 length);
 	bool sendRequest(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length);
 	bool sendResponse(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length);
-	bool responseConnect(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length, uint32 connHandle);
+	bool responseConnect(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length, uint32 connType, uint32 connHandle);
+	const char* getConnectIP(uint32 connType, uint32 connHandle);
+	bool closeConnect(uint32 connType, uint32 connHandle);
 	bool curlRequest(RequestData* pRequest);
-	const char* getConnectIP(uint32 connHandle);
-	bool closeConnect(uint32 connHandle);
 
 	uint32 hash(const char* str, uint32 length);
 	void encrypt(const char* str, uint32 length, std::string& result);

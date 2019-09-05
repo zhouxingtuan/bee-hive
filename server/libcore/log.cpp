@@ -79,7 +79,7 @@ public:
 //        O_WRONLY:以只写方式打开文件
 //        O_RDWR:以读写方式打开文
 //          0666 = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH
-			m_fileHandle = open(m_fileName.c_str(), O_APPEND|O_CREAT, S_IRUSR|S_IWUSR);   // O_APPEND
+			m_fileHandle = open(m_fileName.c_str(), O_APPEND|O_CREAT, S_IRUSR|S_IWUSR|S_IROTH);   // O_APPEND
 		}else{
 			m_fileHandle = open(m_fileName.c_str(), O_RDWR);
 		}
@@ -241,8 +241,8 @@ void writeCppLog(const char* str){
 void writeLog(const char* fileName, const char* str){
     pthread_mutex_lock(&m_mutex);
     m_inQueue.push_back(std::make_pair(std::string(fileName), std::string(str)));
-    pthread_cond_signal(&m_cond);
     pthread_mutex_unlock(&m_mutex);
+    pthread_cond_signal(&m_cond);
 }
 void writeLogInThread(const std::string& fileName, const std::string& str){
     LogFile* f = getOrReviveLogFile(fileName);
@@ -258,11 +258,12 @@ void writeLogInThread(const std::string& fileName, const std::string& str){
         char tempBuffer[256];
         sprintf(tempBuffer, "%s.%s", f->getFileName().c_str(), getTimeStringUSFile());
         f->renameLog(tempBuffer);
-        if( !f->openLog() ){
-            fprintf(stderr, "openLog file=%s failed", fileName.c_str());
-            removeLogFile(fileName);
-            return;
-        }
+        removeLogFile(fileName);
+//        if( !f->openLog() ){
+//            fprintf(stderr, "openLog file=%s failed", fileName.c_str());
+//            removeLogFile(fileName);
+//            return;
+//        }
     }
 }
 void* LogThreadHandleFunction(void* arg){

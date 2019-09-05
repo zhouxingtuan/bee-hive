@@ -86,125 +86,11 @@ int64 Node::getTimerLeft(uint32 handle){
 bool Node::sendPacket(Packet* pPacket){
 	return MainWorker::getInstance()->dispatchMessage(pPacket);
 }
-const char* Node::getConnectIP(uint32 connHandle) {
-	Object080816::Handle handle(connHandle);
-	uint32 connType = handle.getType();
-	switch(connType){
-		case CONN_TYPE_CLIENT:{
-			Client* pClient = MainWorker::getInstance()->getClient(connHandle);
-			if(NULL != pClient){
-				return pClient->getIP();
-			}
-			break;
-		}
-		case CONN_TYPE_ACCEPT:{
-			Accept* pAccept = MainWorker::getInstance()->getAccept(connHandle);
-			if(NULL != pAccept){
-				return pAccept->getIP();
-			}
-			break;
-		}
-		case CONN_TYPE_HTTP:{
-			Http* pHttp = MainWorker::getInstance()->getHttp(connHandle);
-			if(NULL != pHttp){
-				return pHttp->getIP();
-			}
-			break;
-		}
-		case CONN_TYPE_HTTPS:{
-			Https* pHttps = MainWorker::getInstance()->getHttps(connHandle);
-			if(NULL != pHttps){
-				return pHttps->getIP();
-			}
-			break;
-		}
-		default:{
-			LOG_ERROR("unknown connection type =%d", connType);
-			break;
-		}
-	}
-	LOG_ERROR("getConnectIP failed connHandle=%d", connHandle);
-	return "";
-}
-bool Node::closeConnect(uint32 connHandle){
-	Object080816::Handle handle(connHandle);
-	uint32 connType = handle.getType();
-	switch(connType){
-		case CONN_TYPE_CLIENT:{
-			Client* pClient = MainWorker::getInstance()->getClient(connHandle);
-			if(NULL != pClient){
-				pClient->epollRemove();
-				return true;
-			}
-			break;
-		}
-		case CONN_TYPE_ACCEPT:{
-			Accept* pAccept = MainWorker::getInstance()->getAccept(connHandle);
-			if(NULL != pAccept){
-				pAccept->epollRemove();
-				return true;
-			}
-			break;
-		}
-		case CONN_TYPE_HTTP:{
-			Http* pHttp = MainWorker::getInstance()->getHttp(connHandle);
-			if(NULL != pHttp){
-				pHttp->epollRemove();
-				return true;
-			}
-			break;
-		}
-		case CONN_TYPE_HTTPS:{
-			Https* pHttps = MainWorker::getInstance()->getHttps(connHandle);
-			if(NULL != pHttps){
-				pHttps->epollRemove();
-				return true;
-			}
-			break;
-		}
-		default:{
-			LOG_ERROR("unknown connection type =%d", connType);
-			break;
-		}
-	}
-	LOG_ERROR("closeConnect failed connHandle=%d", connHandle);
-	return false;
-}
-bool Node::pushUser(uint32 desID, uint32 message, uint32 uid, const char* ptr, uint32 length){
-	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + length);
-	pPacket->retain();
-	pPacket->writeBegin(COMMAND_PUSH_USER_REQUEST);
-//	pPacket->setCallback(0);
-	pPacket->setDestination(SERVER_TYPE_ROUTE, desID);
-	pPacket->setSource(getModuleType(), getNodeID());
-	pPacket->setMessage(message);
-	pPacket->setUID(uid);
-	pPacket->write(ptr, length);
-	pPacket->writeEnd();
-	bool result = MainWorker::getInstance()->dispatchMessage(pPacket);
-	pPacket->release();
-	return result;
-}
-bool Node::broadcastOnline(uint32 message, uint32 uid, const char* ptr, uint32 length){
-	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + length);
-	pPacket->retain();
-	pPacket->writeBegin(COMMAND_BROADCAST_ONLINE_BEGIN);
-//	pPacket->setCallback(0);
-	pPacket->setDestination(SERVER_TYPE_ACCESS, 0);
-	pPacket->setSource(getModuleType(), getNodeID());
-	pPacket->setMessage(message);
-	pPacket->setUID(uid);
-	pPacket->write(ptr, length);
-	pPacket->writeEnd();
-	bool result = MainWorker::getInstance()->dispatchMessage(pPacket);
-	pPacket->release();
-	return result;
-}
 bool Node::broadcast(uint32 desType, uint32 message, uint32 uid, const char* ptr, uint32 length){
 	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + length);
 	pPacket->retain();
 	pPacket->writeBegin(COMMAND_BROADCAST_BEGIN);
-//	pPacket->setCallback(0);
+	pPacket->setCallback(0);
 	pPacket->setDestination(desType, 0);
 	pPacket->setSource(getModuleType(), getNodeID());
 	pPacket->setMessage(message);
@@ -246,9 +132,7 @@ bool Node::sendResponse(uint32 desType, uint32 desID, uint32 message, uint32 cal
 	return result;
 }
 bool Node::responseConnect(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length,
-	uint32 connHandle){
-	Object080816::Handle handle(connHandle);
-	uint32 connType = handle.getType();
+	uint32 connType, uint32 connHandle){
 	bool result = false;
 	switch(connType){
 		case CONN_TYPE_CLIENT:{
@@ -311,6 +195,86 @@ bool Node::responseConnect(uint32 desType, uint32 desID, uint32 message, uint32 
 			desType, desID, message, callbackID, uid, connType, connHandle);
 	}
 	return result;
+}
+const char* Node::getConnectIP(uint32 connType, uint32 connHandle) {
+	switch(connType){
+		case CONN_TYPE_CLIENT:{
+			Client* pClient = MainWorker::getInstance()->getClient(connHandle);
+			if(NULL != pClient){
+				return pClient->getIP();
+			}
+			break;
+		}
+		case CONN_TYPE_ACCEPT:{
+			Accept* pAccept = MainWorker::getInstance()->getAccept(connHandle);
+			if(NULL != pAccept){
+				return pAccept->getIP();
+			}
+			break;
+		}
+		case CONN_TYPE_HTTP:{
+			Http* pHttp = MainWorker::getInstance()->getHttp(connHandle);
+			if(NULL != pHttp){
+				return pHttp->getIP();
+			}
+			break;
+		}
+		case CONN_TYPE_HTTPS:{
+			Https* pHttps = MainWorker::getInstance()->getHttps(connHandle);
+			if(NULL != pHttps){
+				return pHttps->getIP();
+			}
+			break;
+		}
+		default:{
+			LOG_ERROR("unknown connection type =%d", connType);
+			break;
+		}
+	}
+	LOG_ERROR("getConnectIP failed connHandle=%d", connHandle);
+	return "";
+}
+bool Node::closeConnect(uint32 connType, uint32 connHandle){
+	switch(connType){
+		case CONN_TYPE_CLIENT:{
+			Client* pClient = MainWorker::getInstance()->getClient(connHandle);
+			if(NULL != pClient){
+				pClient->epollRemove();
+				return true;
+			}
+			break;
+		}
+		case CONN_TYPE_ACCEPT:{
+			Accept* pAccept = MainWorker::getInstance()->getAccept(connHandle);
+			if(NULL != pAccept){
+				pAccept->epollRemove();
+				return true;
+			}
+			break;
+		}
+		case CONN_TYPE_HTTP:{
+			Http* pHttp = MainWorker::getInstance()->getHttp(connHandle);
+			if(NULL != pHttp){
+				pHttp->epollRemove();
+				return true;
+			}
+			break;
+		}
+		case CONN_TYPE_HTTPS:{
+			Https* pHttps = MainWorker::getInstance()->getHttps(connHandle);
+			if(NULL != pHttps){
+				pHttps->epollRemove();
+				return true;
+			}
+			break;
+		}
+		default:{
+			LOG_ERROR("unknown connection type =%d", connType);
+			break;
+		}
+	}
+	LOG_ERROR("closeConnect failed connHandle=%d", connHandle);
+	return false;
 }
 bool Node::curlRequest(RequestData* pRequest){
 	pRequest->m_originNodeID = getNodeID();

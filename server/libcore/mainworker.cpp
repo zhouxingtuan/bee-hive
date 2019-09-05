@@ -15,7 +15,7 @@ DEFINE_INSTANCE_CPP(MainWorker)
 MainWorker::MainWorker(void) : RefObject(),
     m_pEpoll(NULL), m_pTimer(NULL), m_pHandler(NULL), m_pListenerPool(NULL), m_pAcceptPool(NULL),
     m_pClientPool(NULL), m_pHttpPool(NULL), m_pHttpsPool(NULL), m_pMultiCurl(NULL),
-    m_pPingPacket(NULL), m_pSSLCTX(NULL) {
+    m_pSSLCTX(NULL) {
 
 }
 MainWorker::~MainWorker(void){
@@ -51,8 +51,10 @@ int64 MainWorker::checkConnectOnline(Accept* pAccept){
 	return CONNECT_ONLINE_TIME;
 }
 int64 MainWorker::keepConnectOnline(Accept* pAccept){
-	Packet* pPing = new Packet(MainWorker::getInstance()->m_pPingPacket->getBuffer());
+	Packet* pPing = new Packet(PACKET_HEAD_LENGTH);
 	pPing->retain();
+    pPing->writeBegin(COMMAND_PING);
+    pPing->writeEnd();
 	pAccept->sendPacket(pPing);
 	pPing->release();
 	return CONNECT_KEEP_ONLINE_TIME;
@@ -65,6 +67,10 @@ bool MainWorker::onReceiveAccept(Accept* pAccept, Packet* pPacket){
 	return m_pHandler->onReceiveAccept(pAccept, pPacket);
 }
 Http* MainWorker::openHttp(int fd, const char* ip, uint16 port){
+	if(fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0)|O_NONBLOCK) == -1){
+		LOG_ERROR("openHttp set none block failed fd=%d ip=%s port=%d", fd, ip, port);
+		return 0;
+	}
 	Http* pHttp = m_pHttpPool->create();
 	if(NULL == pHttp){
 		LOG_ERROR("create http NULL == pHttp");
@@ -108,6 +114,11 @@ Https* MainWorker::openHttps(int fd, const char* ip, uint16 port){
 		return 0;
 	}
 	LOG_DEBUG("handle=%d", pHttps->getHandle());
+	if(fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0)|O_NONBLOCK) == -1){
+	    closeHttps(pHttps);
+		LOG_ERROR("openHttps set none block failed fd=%d ip=%s port=%d", fd, ip, port);
+		return 0;
+	}
 	// 读取数据
 	pHttps->epollIn();
 	return pHttps;
@@ -150,11 +161,6 @@ Client* MainWorker::getClient(uint32 handle){
 	return m_pClientPool->get(handle);
 }
 void MainWorker::receiveClient(Client* pClient){
-	ClientHandler* pClientHandler = pClient->getClientHandler();
-	if(NULL != pClientHandler){
-		pClientHandler->onReceiveClient(pClient);
-		return;
-	}
 	m_pHandler->onReceiveClient(pClient);
 }
 bool MainWorker::closeClient(Client* pClient){
@@ -280,8 +286,6 @@ void MainWorker::pushPacketToQueue(Accept* pAccept, Packet* pPacket){
     m_packetQueue.push_back(info);
 }
 void MainWorker::dispatchPacket(void){
-    Client* pClient;
-    ClientHandler* pClientHandler;
     Accept* pAccept;
     Packet* pPacket;
     AcceptCommandFunction func;
@@ -289,15 +293,6 @@ void MainWorker::dispatchPacket(void){
     for(auto &info : m_packetQueue){
         pAccept = info.pAccept;
         pPacket = info.pPacket;
-        if( pAccept->getType() == CONN_TYPE_CLIENT ){
-			pClient = (Client*)pAccept;
-			pClientHandler = pClient->getClientHandler();
-			if( NULL != pClientHandler ){
-				pClientHandler->onReceivePacket(pClient, pPacket);
-				pPacket->release();
-				continue;
-			}
-        }
         command = pPacket->getCommand();
 		func = getAcceptCommandFunction(command);
 		if(NULL == func){
@@ -327,7 +322,6 @@ void MainWorker::initialize(Handler* pHandler){
 		m_pEpoll->retain();
 		if( !m_pEpoll->createEpoll() ){
 			LOG_ERROR("createEpoll failed");
-			sleep(1);
 			exit(0);
 		}
 	}
@@ -365,12 +359,6 @@ void MainWorker::initialize(Handler* pHandler){
 		m_pMultiCurl->retain();
 		m_pMultiCurl->setEpoll(m_pEpoll);
 		m_pMultiCurl->initialize();
-	}
-	if(NULL == m_pPingPacket){
-		m_pPingPacket = new Packet(PACKET_HEAD_LENGTH);
-		m_pPingPacket->retain();
-		m_pPingPacket->writeBegin(COMMAND_PING);
-		m_pPingPacket->writeEnd();
 	}
 }
 void MainWorker::initializeHttp(void){

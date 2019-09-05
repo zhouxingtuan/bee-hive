@@ -47,10 +47,6 @@ void onReceiveHttp(Http* pHttp){
 		return;
 	}
 	uint32 moduleType = MainWorker::getInstance()->getHandler()->getModuleType();
-	uint32 uid = 0;
-	if(urlVector.size() > 2){
-		uid = atoi(urlVector[2].c_str());
-	}
 	uint32 moduleIndex = 0;
 	if(urlVector.size() > 1){
 		moduleIndex = atoi(urlVector[1].c_str());
@@ -85,7 +81,6 @@ void onReceiveHttp(Http* pHttp){
 	pPacket->retain();
 	pPacket->writeBegin(COMMAND_HTTP_REQUEST);
 	pPacket->setDestination(moduleType, moduleIndex);
-	pPacket->setUID(uid);
 	pPacket->setMessage(message);
 	pPacket->write(pHttp->getBody(), pHttp->getBodyLength());
 	pPacket->writeEnd();
@@ -110,11 +105,11 @@ void onHttpReceivePacket(Http* pHttp, const char* bodyPtr, uint32 bodyLength){
     pHttp->responseEnd();
 }
 
-Http::Http(void) : EpollConnectObject(), TimerObject(), Object080816(),
+Http::Http(void) : EpollConnectObject(), TimerObject(), Object0824(),
     m_pBuffer(NULL), m_bindNodeID(0),
 	m_httpState(HTTP_STATE_IDLE), m_parseState(HTTP_PARSE_INIT),
-	m_isInEpoll(false), m_offset(0){
-	setType(CONN_TYPE_HTTP);
+	m_isInEpoll(false), m_connType(CONN_TYPE_HTTP), m_offset(0){
+	m_connType = CONN_TYPE_HTTP;
 }
 Http::~Http(void){
 	this->resetData();

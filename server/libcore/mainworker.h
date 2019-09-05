@@ -25,28 +25,18 @@
 NS_HIVE_BEGIN
 
 #define CONNECT_IDENTIFY_TIME 5000
-#define CONNECT_ONLINE_TIME 15000
-#define CONNECT_KEEP_ONLINE_TIME 5000
+#define CONNECT_ONLINE_TIME 120000
+#define CONNECT_KEEP_ONLINE_TIME 10000
 #define HTTP_HANDLE_TIMEOUT 30000
-
-// 预定义服务类型
-#define SERVER_TYPE_ACCESS 1
-#define SERVER_TYPE_LOGIN 2
-#define SERVER_TYPE_ROUTE 3
-#define SERVER_TYPE_USER 4
-#define SERVER_TYPE_DATA 5
 
 #define COMMAND_CLIENT_REQUEST 1
 #define COMMAND_HTTP_REQUEST 2
 #define COMMAND_NODE_REQUEST 3
-#define COMMAND_PUSH_USER_REQUEST 4
-
-#define COMMAND_BROADCAST_BEGIN 11
-#define COMMAND_BROADCAST 12
-#define COMMAND_BROADCAST_ONLINE_BEGIN 13
-#define COMMAND_BROADCAST_ONLINE 14
-
-#define COMMAND_NODE_RESPONSE 21
+#define COMMAND_NODE_RESPONSE 4
+#define COMMAND_NODE_ERROR 5
+#define COMMAND_REQUEST_TIMEOUT 6
+#define COMMAND_BROADCAST 7
+#define COMMAND_BROADCAST_BEGIN 8
 
 #define COMMAND_PING 255
 #define COMMAND_PONG 254
@@ -85,7 +75,6 @@ public:
 	HttpPool* m_pHttpPool;
 	HttpsPool* m_pHttpsPool;
 	MultiCurl* m_pMultiCurl;
-	Packet* m_pPingPacket;				// 预先生成的ping数据包
 	SSL_CTX* m_pSSLCTX;
     http_parser_settings m_settings;
 	AcceptCommandFunction m_commandArr[COMMAND_NUMBER];
@@ -157,7 +146,6 @@ public:
 	inline http_parser_settings* getSettings(void) { return &m_settings; }
 	inline MultiCurl* getMultiCurl(void){ return m_pMultiCurl; }
 	inline char* getReadBuffer(void){ return m_pReadBuffer; }
-	inline Packet* getPingPacket(void){ return m_pPingPacket; }
 	inline Epoll* getEpoll(void){ return m_pEpoll; }
 	inline Timer* getTimer(void){ return m_pTimer; }
 	inline void setAcceptCommandFunction(uint32 command, AcceptCommandFunction func){

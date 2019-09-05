@@ -12,8 +12,8 @@
 
 NS_HIVE_BEGIN
 
-Client::Client(void) : Accept(), m_pClientHandler(NULL) {
-	setType(CONN_TYPE_CLIENT);
+Client::Client(void) : Accept() {
+	m_connType = CONN_TYPE_CLIENT;
 }
 Client::~Client(void){
 
@@ -76,10 +76,6 @@ void Client::epollRemove(void){
 	if(getSocketFD() > 0){
     	MainWorker::getInstance()->closeClient(this);
 	}
-}
-void Client::resetData(void){
-	Accept::resetData();
-	m_pClientHandler = NULL;
 }
 
 NS_HIVE_END

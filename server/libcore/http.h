@@ -64,7 +64,7 @@ typedef struct HttpHeaderRecorder{
 #define CONN_TYPE_HTTPS 4
 
 typedef std::vector<HttpHeaderRecorder> HttpHeaderRecorderVector;
-class Http : public EpollConnectObject, public TimerObject, public Object080816
+class Http : public EpollConnectObject, public TimerObject, public Object0824
 {
 public:
 	Http(void);
@@ -150,6 +150,7 @@ public:
 	inline int getWriteSize(void) const { return ((int)m_pBuffer->size() - getOffset()); }
 	inline void setIsInEpoll(bool isIn) { m_isInEpoll = isIn; }
 	inline bool isInEpoll(void) const { return m_isInEpoll; }
+	inline unsigned char getType(void) const { return m_connType; }
 	bool checkEpollState(uint32 events);
 	virtual void resetData(void);
 	void initialize(void);
@@ -165,6 +166,7 @@ protected:
 	char m_httpState;
 	char m_parseState;
 	bool m_isInEpoll;
+	unsigned char m_connType;       // 连接的类型
 	int m_offset;
 	HttpValueRecorder m_url;
 	HttpValueRecorder m_body;

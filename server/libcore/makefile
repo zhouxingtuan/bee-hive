@@ -36,7 +36,7 @@ $(LIB_NAME):$(OBJS) $(COBJS)
 
 $(DLL_NAME):$(OBJS) $(COBJS)
 	$(CC) $(DEBUG) $(OBJS) $(COBJS) $(CXXFLAGS) -shared -o $(DLL_NAME)
-#	$(RM) $(BIN)/$(DLL_NAME)
+	$(RM) $(BIN)/$(DLL_NAME)
 	cp $(DLL_NAME) $(BIN)/$(DLL_NAME)
 
 clean:

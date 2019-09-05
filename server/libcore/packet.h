@@ -47,8 +47,8 @@ public:
 
 // 服务间传递消息的头部数据结构
 typedef struct PacketHead {
-	int length : 24;                // 3 包的长度，传递的数据在8M以内
-	unsigned int command : 8;       // 1 消息的类型
+	int length;                     // 4 包的长度，传递的数据在8M以内
+	unsigned int command;           // 4 消息的类型
 	unsigned int callback;          // 4 返回的回调ID
 	DestinationHandle destination;  // 4 目标服务
 	DestinationHandle source;       // 4 源头服务
@@ -76,6 +76,8 @@ public:
     virtual ~Packet(void);
 
 	void copyFrom(Packet* pPacket);
+    void convertHead(void);
+    void reverseHead(void);
 
 	inline void setCursorToEnd(void){ m_cursor = getLength(); }
 	inline void setCursor(int cur){ m_cursor = cur; }
@@ -109,6 +111,7 @@ public:
 	}
 	inline void writeEnd(void){
 		recordLength();
+		m_pBuffer->clearEncryptFlag();
 	}
 	template<typename NUMBER_T>
 	inline int beginArray(void){
@@ -127,16 +130,16 @@ public:
 	}
 	inline int write(const void* ptr, int length){
 		int n = m_pBuffer->write(ptr, length, getCursor());
-		if( n > 0 ){
+//		if( n > 0 ){
 			moveCursor(n);
-		}
+//		}
 		return n;
 	}
 	inline int read(void* ptr, int length){
 		int n = m_pBuffer->read(ptr, length, getCursor());
-		if( n > 0 ){
+//		if( n > 0 ){
 			moveCursor(n);
-		}
+//		}
 		return n;
 	}
 	inline int appendWrite(const void* ptr, int length){

@@ -12,7 +12,7 @@
 NS_HIVE_BEGIN
 
 Https::Https(void) : Http(), m_pSSL(NULL) {
-	setType(CONN_TYPE_HTTPS);
+	m_connType = CONN_TYPE_HTTPS;
 }
 Https::~Https(void){
 	destroySSL();

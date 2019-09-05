@@ -13,22 +13,8 @@
 
 NS_HIVE_BEGIN
 
-class Client;
-
-class ClientHandler
-{
-public:
-	ClientHandler(void){}
-	virtual ~ClientHandler(void){}
-
-	virtual void onReceiveClient(Client* pClient) = 0;
-	virtual bool onReceivePacket(Client* pClient, Packet* pPacket) = 0;
-};
-
 class Client : public Accept
 {
-public:
-	ClientHandler* m_pClientHandler;
 public:
 	Client(void);
 	virtual ~Client(void);
@@ -46,12 +32,7 @@ public:
 	virtual bool epollActive(uint32 events);
 	virtual void epollRemove(void);
 
-	// from Accept
-	virtual void resetData(void);
-
 	bool connectServer(void);
-	void setClientHandler(ClientHandler* pClientHandler){ m_pClientHandler = pClientHandler; }
-	ClientHandler* getClientHandler(void){ return m_pClientHandler; }
 };
 
 typedef ObjectPool<Client> ClientPool;

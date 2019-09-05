@@ -20,7 +20,7 @@ NS_HIVE_BEGIN
 #define EPOLL_READ_BUFFER_SIZE 8192
 //#define EPOLL_READ_BUFFER_SIZE 16384
 #define MAX_LENGTH_NOT_IDENTIFY 64
-#define MAX_LENGTH_IDENTIFY 4194312	// 4M + 8
+#define MAX_LENGTH_IDENTIFY 16777244	// 16M + 28
 
 enum ConnectionState {
 	CS_DISCONNECT = 0,
@@ -37,7 +37,7 @@ class Accept;
 
 typedef int64 (*ConnectTimeoutCallback)(Accept* pAccept);
 
-class Accept : public EpollConnectObject, public TimerObject, public Object080816
+class Accept : public EpollConnectObject, public TimerObject, public Object0824
 {
 public:
 	typedef std::deque<Packet*> PacketQueue;
@@ -49,6 +49,7 @@ public:
 	bool m_isOnline;
 	bool m_isNeedEncrypt;			// 是否需要解密
 	bool m_isNeedDecrypt;			// 是否需要加密
+	unsigned char m_connType;       // 连接的类型
 	uint32 m_bindNodeID;			// 绑定的句柄，主要用于离线的时候，通知对方连接离线
 	char m_tempLength;
 	char m_tempHead[PACKET_HEAD_LENGTH];
@@ -92,7 +93,7 @@ public:
 			return MAX_LENGTH_NOT_IDENTIFY;
 		}
 	}
-	virtual void resetData(void);
+	void resetData(void);
 
 	inline void setTempReadPacket(Packet* pPacket){ m_tempReadPacket = pPacket; }
 	inline Packet* getTempReadPacket(void){ return m_tempReadPacket; }
@@ -100,6 +101,7 @@ public:
 	inline void setIsNeedEncrypt(bool need) { m_isNeedEncrypt = need; }
 	inline bool isNeedDecrypt(void) const { return m_isNeedDecrypt; }
 	inline void setIsNeedDecrypt(bool need) { m_isNeedDecrypt = need; }
+	inline unsigned char getType(void) const { return m_connType; }
 	inline void setBindNodeID(uint32 nodeID){ m_bindNodeID = nodeID; }
 	inline uint32 getBindNodeID(void) const { return m_bindNodeID; }
 protected:

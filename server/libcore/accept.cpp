@@ -39,6 +39,11 @@ void onAcceptRead(Accept* pAccept, char* recvBuffer, int nread){
 			nread -= needLength;
     	}
     }
+    // 解析剩余的数据包
+	char* recvBufferPtr;
+	int packetLength;
+	int writeLength;
+	bool isSuccessParsePacket = true;
 	if( nread < (int)PACKET_HEAD_LENGTH ){
 	    if(nread > 0){
             pAccept->m_tempLength = nread;
@@ -46,11 +51,6 @@ void onAcceptRead(Accept* pAccept, char* recvBuffer, int nread){
 	    }
 		return;
 	}
-    // 解析剩余的数据包
-	char* recvBufferPtr;
-	int packetLength;
-	int writeLength;
-	bool isSuccessParsePacket = true;
 	//这里读取的信息很可能包含多条信息，这时候需要解析出来；这几条信息因为太短，在发送时被底层socket合并了
 	recvBufferPtr = recvBuffer;
 	do{
@@ -59,11 +59,13 @@ void onAcceptRead(Accept* pAccept, char* recvBuffer, int nread){
 			LOG_DEBUG("Accept decrypt head");
 			binary_decrypt(recvBufferPtr, PACKET_HEAD_LENGTH_PROTECT, MainWorker::getInstance()->getKey());
 		}
-		packetLength = ((PacketHead*)(recvBufferPtr))->length;
+		packetLength = ntohl( ((PacketHead*)(recvBufferPtr))->length );
 		if( packetLength < (int)PACKET_HEAD_LENGTH || packetLength > pAccept->getMaxLength() ){
 			LOG_ERROR("head length is invalid packetLength=%d left=%d", packetLength, (int)(nread-(recvBufferPtr-recvBuffer)));
 			pAccept->setTempReadPacket(NULL);
 			isSuccessParsePacket = false;
+			pAccept->epollRemove();
+			return;
 			break;	// 这里直接将数据丢弃
 		}
 		writeLength = std::min( (int)(nread-(recvBufferPtr-recvBuffer)), packetLength );
@@ -71,6 +73,7 @@ void onAcceptRead(Accept* pAccept, char* recvBuffer, int nread){
 		pPacket = new Packet(packetLength);
 		pPacket->retain();	// 如果数据没有全部收到，那么m_tempReadPacket会保持这个retain状态
 		pPacket->write( recvBufferPtr, writeLength );
+		pPacket->reverseHead();
 		recvBufferPtr += writeLength;
 		if( pPacket->isReceiveEnd() ){
 			// 派发消息给对应的消息处理器
@@ -89,12 +92,12 @@ void onAcceptRead(Accept* pAccept, char* recvBuffer, int nread){
     pAccept->setTempReadPacket(pPacket);
 }
 
-Accept::Accept(void) : EpollConnectObject(), TimerObject(), Object080816(),
+Accept::Accept(void) : EpollConnectObject(), TimerObject(), Object0824(),
  	m_timerCallback(NULL), m_tempReadPacket(NULL),
  	m_connectionState(CS_DISCONNECT), m_isOnline(false),
-	m_isNeedEncrypt(false), m_isNeedDecrypt(false), m_bindNodeID(0), m_tempLength(0)
+	m_isNeedEncrypt(false), m_isNeedDecrypt(false), m_connType(CONN_TYPE_ACCEPT), m_bindNodeID(0), m_tempLength(0)
 {
-	setType(CONN_TYPE_ACCEPT);
+	m_connType = CONN_TYPE_ACCEPT;
 }
 Accept::~Accept(void){
 	releasePacket();
@@ -175,9 +178,11 @@ void Accept::releasePacket(void){
 	m_packetQueue.clear();
 }
 bool Accept::sendPacket(Packet* pPacket){
+//	LOG_INFO("send package, packet length=%d commond=%u des=%u res=%u message=0x%x uid=%d callbackID=%u",
+//				pPacket->getLength(), pPacket->getCommand(), pPacket->getDestination(), pPacket->getSource(),
+//				pPacket->getMessage(), pPacket->getUID(), pPacket->getCallback());
 	pPacket->resetCursor();		// 后面的写操作需要重置
 	pPacket->retain();			// 进入队列前引用
-	pPacket->recordLength();
 	if( !m_packetQueue.empty() ){
 		// 已经在epoll中等待out事件
 		m_packetQueue.push_back(pPacket);
@@ -275,9 +280,9 @@ void Accept::dispatchPacket(Packet* pPacket, uint32 command){
 	MainWorker::getInstance()->pushPacketToQueue(this, pPacket);
 }
 int Accept::readSocket(void){
-	if(this->getSocketFD() <= 0){
-		return -1;
-	}
+    if( this->getSocketFD() <= 0 ){
+        return -1;
+    }
 	char* recvBuffer = MainWorker::getInstance()->getReadBuffer();
 	int nread;
 	if(m_tempLength > 0){
@@ -308,13 +313,18 @@ int Accept::readSocket(void){
 int Accept::writeSocket(Packet* pPacket){
 	// 检查是否已经经过加密操作
 	if( pPacket->getBuffer()->checkEncryptFlag() ){
+	    pPacket->recordLength();
+	    pPacket->convertHead();
 		if( this->isNeedEncrypt() ){
 			binary_encrypt(pPacket->getDataPtr(), PACKET_HEAD_LENGTH_PROTECT, MainWorker::getInstance()->getKey());
 			binary_encrypt(pPacket->getBody(), pPacket->getBodyLength(), MainWorker::getInstance()->getKey());
 		}
 	}
-    int nwrite;
-    nwrite = write(this->getSocketFD(), pPacket->getCursorPtr(), pPacket->getLength()-pPacket->getCursor());
+	int nwrite;
+	nwrite = write(this->getSocketFD(), pPacket->getCursorPtr(), pPacket->getLength()-pPacket->getCursor());
+//	LOG_INFO("write socket, fd=%d, packet length=%d commond=%u des=%u res=%u message=0x%x uid=%d callbackID=%u, send length:%d",
+//			this->getSocketFD(), pPacket->getLength(), pPacket->getCommand(), pPacket->getDestination(), pPacket->getSource(),
+//			pPacket->getMessage(), pPacket->getUID(), pPacket->getCallback(), nwrite);
 //    nwrite = send(this->getSocketFD(), pPacket->getCursorPtr(), pPacket->getLength()-pPacket->getCursor(), 0);
     if(nwrite < 0){
         switch(errno){
@@ -333,7 +343,9 @@ int Accept::writeSocket(Packet* pPacket){
 }
 int Accept::writeSocket(const char* ptr, int length, int* writeLength){
     int nwrite;
-    nwrite = write(this->getSocketFD(), ptr, length);
+	nwrite = write(this->getSocketFD(), ptr, length);
+	LOG_INFO("write socket, fd=%d packet length=%d send length:%d", 
+			this->getSocketFD(), length, nwrite);
 //    nwrite = send(this->getSocketFD(), ptr, length, 0);
     if(nwrite < 0){
         switch(errno){

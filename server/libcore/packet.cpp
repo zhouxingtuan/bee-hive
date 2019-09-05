@@ -30,5 +30,25 @@ void Packet::copyFrom(Packet* pPacket){
 	m_cursor = pPacket->m_cursor;
 	m_pBuffer->copyFrom(pPacket->m_pBuffer);
 }
+void Packet::convertHead(void){
+    PacketHead* pHead = getHead();
+    pHead->length = htonl(pHead->length);
+    pHead->command = htonl(pHead->command);
+    pHead->callback = htonl(pHead->callback);
+    pHead->destination = htonl(pHead->destination.getHandle());
+    pHead->source = htonl(pHead->source.getHandle());
+    pHead->message = htonl(pHead->message);
+    pHead->uid = htonl(pHead->uid);
+}
+void Packet::reverseHead(void){
+    PacketHead* pHead = getHead();
+    pHead->length = ntohl(pHead->length);
+    pHead->command = ntohl(pHead->command);
+    pHead->callback = ntohl(pHead->callback);
+    pHead->destination = ntohl(pHead->destination.getHandle());
+    pHead->source = ntohl(pHead->source.getHandle());
+    pHead->message = ntohl(pHead->message);
+    pHead->uid = ntohl(pHead->uid);
+}
 
 NS_HIVE_END
