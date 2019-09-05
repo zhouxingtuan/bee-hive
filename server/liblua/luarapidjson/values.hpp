@@ -47,13 +47,13 @@ namespace values {
 
 	inline bool isarray(lua_State* L, int idx, size_t* pMax) {
 		auto arr = false;
-		if (hasJsonType(L, idx, arr)) // any table with a meta field __jsontype set to 'array' are arrays
-		{
-			if(pMax && arr){
-				*pMax = luax::rawlen(L, idx); // any table has length > 0 are treat as array.
-			}
-			return arr;
-		}
+//		if (hasJsonType(L, idx, arr)) // any table with a meta field __jsontype set to 'array' are arrays
+//		{
+//			if(pMax && arr){
+//				*pMax = luax::rawlen(L, idx); // any table has length > 0 are treat as array.
+//			}
+//			return arr;
+//		}
 
 		size_t max = 0;
 		size_t count = 0;

@@ -13,17 +13,5 @@ class LuaNode : public Node
 	MD5* createMD5(void);
 	bool removeMD5(MD5* pMD5);
 
-	HiveKV* createHiveKV(void);
-	bool removeHiveKV(HiveKV* pHiveKV);
-
-	HiveBlock* createHiveBlock(void);
-	bool removeHiveBlock(HiveBlock* pHiveBlock);
-
-	HiveArray* createHiveArray(void);
-	bool removeHiveArray(HiveArray* pHiveArray);
-
-	HiveMap* createHiveMap(void);
-	bool removeHiveMap(HiveMap* pHiveMap);
-
 };
 

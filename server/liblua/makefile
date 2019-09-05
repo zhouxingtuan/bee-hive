@@ -6,8 +6,8 @@ LUA_DIR := ./../../third/LuaJIT
 LUA_INC := $(LUA_DIR)/src
 LUA_DLL_PATH := $(LUA_DIR)/src
 
-BASE_STATIC := ./../libbase/libbase.a
-BASE_INC := ./../libbase/
+#BASE_STATIC := ./../libbase/libbase.a
+#BASE_INC := ./../libbase/
 
 TOLUA_STATIC := ./tolua/libtolua.a
 TOLUA_INC := ./tolua
@@ -40,7 +40,7 @@ DEBUG= -g -ggdb
 
 BIN = ../../bin/lib
 
-OBJS = luamodule.o luanode.o dbredis.o dbmysql.o liblua.o eproto.o script.o
+OBJS = luamodule.o luanode.o dbredis.o dbmysql.o liblua.o eproto.o script.o md5.o
 
 COBJS = mime.o
 
@@ -58,11 +58,13 @@ $(DLL_NAME):$(OBJS) $(COBJS)
 	$(MAKE) -C hiredis
 	$(CC) $(DEBUG) $(OBJS) $(COBJS) $(STATIC_LIB) $(CXXFLAGS) -shared -o $(DLL_NAME)
 	$(RM) $(BIN)/$(DLL_NAME)
-#	cp $(LUA_DLL_PATH)/libluajit.so $(BIN)
+	cp $(LUA_DLL_PATH)/libluajit.so $(BIN)
 #	cp $(TOLUA_DLL_PATH)/libtolua.so $(BIN)
 	cp $(DLL_NAME) $(BIN)/$(DLL_NAME)
 
 mime.o:mime.c mime.h
+
+md5.o:md5.cpp md5.h
 
 script.o:script.cpp script.h
 

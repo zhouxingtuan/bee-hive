@@ -1,6 +1,6 @@
 /*
 ** Lua binding: liblua
-** Generated automatically by tolua++-1.0.92 on Mon Oct  2 21:39:44 2017.
+** Generated automatically by tolua++-1.0.92 on Thu Sep  5 15:08:00 2019.
 */
 
 #ifndef __cplusplus
@@ -19,15 +19,11 @@ TOLUA_API int  tolua_liblua_open (lua_State* tolua_S);
 /* function to register type */
 static void tolua_reg_types (lua_State* tolua_S)
 {
+ tolua_usertype(tolua_S,"LuaNode");
  tolua_usertype(tolua_S,"DBMysql");
  tolua_usertype(tolua_S,"Accept");
- tolua_usertype(tolua_S,"HiveBlock");
- tolua_usertype(tolua_S,"LuaNode");
- tolua_usertype(tolua_S,"MD5");
- tolua_usertype(tolua_S,"HiveMap");
- tolua_usertype(tolua_S,"HiveArray");
  tolua_usertype(tolua_S,"DBRedis");
- tolua_usertype(tolua_S,"HiveKV");
+ tolua_usertype(tolua_S,"MD5");
  tolua_usertype(tolua_S,"Node");
  tolua_usertype(tolua_S,"Http");
 }
@@ -165,88 +161,6 @@ static int tolua_liblua_Node_getTimerLeft00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'getTimerLeft'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: pushUser of class  Node */
-#ifndef TOLUA_DISABLE_tolua_liblua_Node_pushUser00
-static int tolua_liblua_Node_pushUser00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"Node",0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,5,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,6,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,7,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  Node* self = (Node*)  tolua_tousertype(tolua_S,1,0);
-  unsigned int desID = (( unsigned int)  tolua_tonumber(tolua_S,2,0));
-  unsigned int message = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
-  unsigned int uid = (( unsigned int)  tolua_tonumber(tolua_S,4,0));
-  const char* ptr = ((const char*)  tolua_tostring(tolua_S,5,0));
-  unsigned int length = (( unsigned int)  tolua_tonumber(tolua_S,6,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'pushUser'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->pushUser(desID,message,uid,ptr,length);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'pushUser'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: broadcastOnline of class  Node */
-#ifndef TOLUA_DISABLE_tolua_liblua_Node_broadcastOnline00
-static int tolua_liblua_Node_broadcastOnline00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"Node",0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,6,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  Node* self = (Node*)  tolua_tousertype(tolua_S,1,0);
-  unsigned int message = (( unsigned int)  tolua_tonumber(tolua_S,2,0));
-  unsigned int uid = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
-  const char* ptr = ((const char*)  tolua_tostring(tolua_S,4,0));
-  unsigned int length = (( unsigned int)  tolua_tonumber(tolua_S,5,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'broadcastOnline'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->broadcastOnline(message,uid,ptr,length);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'broadcastOnline'.",&tolua_err);
  return 0;
 #endif
 }
@@ -402,7 +316,8 @@ static int tolua_liblua_Node_responseConnect00(lua_State* tolua_S)
      !tolua_isstring(tolua_S,7,0,&tolua_err) ||
      !tolua_isnumber(tolua_S,8,0,&tolua_err) ||
      !tolua_isnumber(tolua_S,9,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,10,&tolua_err)
+     !tolua_isnumber(tolua_S,10,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,11,&tolua_err)
  )
   goto tolua_lerror;
  else
@@ -416,12 +331,13 @@ static int tolua_liblua_Node_responseConnect00(lua_State* tolua_S)
   unsigned int uid = (( unsigned int)  tolua_tonumber(tolua_S,6,0));
   const char* ptr = ((const char*)  tolua_tostring(tolua_S,7,0));
   unsigned int length = (( unsigned int)  tolua_tonumber(tolua_S,8,0));
-  unsigned int connHandle = (( unsigned int)  tolua_tonumber(tolua_S,9,0));
+  unsigned int connType = (( unsigned int)  tolua_tonumber(tolua_S,9,0));
+  unsigned int connHandle = (( unsigned int)  tolua_tonumber(tolua_S,10,0));
 #ifndef TOLUA_RELEASE
   if (!self) tolua_error(tolua_S,"invalid 'self' in function 'responseConnect'", NULL);
 #endif
   {
-   bool tolua_ret = (bool)  self->responseConnect(desType,desID,message,callbackID,uid,ptr,length,connHandle);
+   bool tolua_ret = (bool)  self->responseConnect(desType,desID,message,callbackID,uid,ptr,length,connType,connHandle);
    tolua_pushboolean(tolua_S,(bool)tolua_ret);
   }
  }
@@ -443,19 +359,21 @@ static int tolua_liblua_Node_getConnectIP00(lua_State* tolua_S)
  if (
      !tolua_isusertype(tolua_S,1,"Node",0,&tolua_err) ||
      !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
+     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,4,&tolua_err)
  )
   goto tolua_lerror;
  else
 #endif
  {
   Node* self = (Node*)  tolua_tousertype(tolua_S,1,0);
-  unsigned int connHandle = (( unsigned int)  tolua_tonumber(tolua_S,2,0));
+  unsigned int connType = (( unsigned int)  tolua_tonumber(tolua_S,2,0));
+  unsigned int connHandle = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
 #ifndef TOLUA_RELEASE
   if (!self) tolua_error(tolua_S,"invalid 'self' in function 'getConnectIP'", NULL);
 #endif
   {
-   const char* tolua_ret = (const char*)  self->getConnectIP(connHandle);
+   const char* tolua_ret = (const char*)  self->getConnectIP(connType,connHandle);
    tolua_pushstring(tolua_S,(const char*)tolua_ret);
   }
  }
@@ -477,19 +395,21 @@ static int tolua_liblua_Node_closeConnect00(lua_State* tolua_S)
  if (
      !tolua_isusertype(tolua_S,1,"Node",0,&tolua_err) ||
      !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
+     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,4,&tolua_err)
  )
   goto tolua_lerror;
  else
 #endif
  {
   Node* self = (Node*)  tolua_tousertype(tolua_S,1,0);
-  unsigned int connHandle = (( unsigned int)  tolua_tonumber(tolua_S,2,0));
+  unsigned int connType = (( unsigned int)  tolua_tonumber(tolua_S,2,0));
+  unsigned int connHandle = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
 #ifndef TOLUA_RELEASE
   if (!self) tolua_error(tolua_S,"invalid 'self' in function 'closeConnect'", NULL);
 #endif
   {
-   bool tolua_ret = (bool)  self->closeConnect(connHandle);
+   bool tolua_ret = (bool)  self->closeConnect(connType,connHandle);
    tolua_pushboolean(tolua_S,(bool)tolua_ret);
   }
  }
@@ -1827,650 +1747,6 @@ static int tolua_liblua_DBRedis_identifyRedis00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: openDB of class  HiveKV */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveKV_openDB00
-static int tolua_liblua_HiveKV_openDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveKV",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveKV* self = (HiveKV*)  tolua_tousertype(tolua_S,1,0);
-  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'openDB'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->openDB(name);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'openDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: closeDB of class  HiveKV */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveKV_closeDB00
-static int tolua_liblua_HiveKV_closeDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveKV",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveKV* self = (HiveKV*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'closeDB'", NULL);
-#endif
-  {
-   self->closeDB();
-  }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'closeDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: set of class  HiveKV */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveKV_set00
-static int tolua_liblua_HiveKV_set00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveKV",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,6,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveKV* self = (HiveKV*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned int keyLength = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
-  const char* value = ((const char*)  tolua_tostring(tolua_S,4,0));
-  unsigned int valueLength = (( unsigned int)  tolua_tonumber(tolua_S,5,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'set'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->set(key,keyLength,value,valueLength);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'set'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: setn of class  HiveKV */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveKV_setn00
-static int tolua_liblua_HiveKV_setn00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveKV",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,6,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveKV* self = (HiveKV*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned int keyLen = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
-  const char* value = ((const char*)  tolua_tostring(tolua_S,4,0));
-  unsigned int valueLen = (( unsigned int)  tolua_tonumber(tolua_S,5,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setn'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->setn(key,keyLen,value,valueLen);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'setn'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: del of class  HiveKV */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveKV_del00
-static int tolua_liblua_HiveKV_del00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveKV",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,4,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveKV* self = (HiveKV*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned int keyLen = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'del'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->del(key,keyLen);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'del'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: replace of class  HiveKV */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveKV_replace00
-static int tolua_liblua_HiveKV_replace00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveKV",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,6,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveKV* self = (HiveKV*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned int length = (( unsigned int)  tolua_tonumber(tolua_S,3,0));
-  const char* newKey = ((const char*)  tolua_tostring(tolua_S,4,0));
-  unsigned int newLength = (( unsigned int)  tolua_tonumber(tolua_S,5,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'replace'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->replace(key,length,newKey,newLength);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'replace'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: openDB of class  HiveBlock */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveBlock_openDB00
-static int tolua_liblua_HiveBlock_openDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveBlock",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,5,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveBlock* self = (HiveBlock*)  tolua_tousertype(tolua_S,1,0);
-  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned long long int minIndex = (( unsigned long long int)  tolua_tonumber(tolua_S,3,0));
-  unsigned long long int maxIndex = (( unsigned long long int)  tolua_tonumber(tolua_S,4,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'openDB'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->openDB(name,minIndex,maxIndex);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'openDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: closeDB of class  HiveBlock */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveBlock_closeDB00
-static int tolua_liblua_HiveBlock_closeDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveBlock",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveBlock* self = (HiveBlock*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'closeDB'", NULL);
-#endif
-  {
-   self->closeDB();
-  }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'closeDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: set of class  HiveBlock */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveBlock_set00
-static int tolua_liblua_HiveBlock_set00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveBlock",0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,5,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveBlock* self = (HiveBlock*)  tolua_tousertype(tolua_S,1,0);
-  unsigned long long int index = (( unsigned long long int)  tolua_tonumber(tolua_S,2,0));
-  const char* ptr = ((const char*)  tolua_tostring(tolua_S,3,0));
-  long long int length = (( long long int)  tolua_tonumber(tolua_S,4,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'set'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->set(index,ptr,length);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'set'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: del of class  HiveBlock */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveBlock_del00
-static int tolua_liblua_HiveBlock_del00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveBlock",0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveBlock* self = (HiveBlock*)  tolua_tousertype(tolua_S,1,0);
-  unsigned long long int index = (( unsigned long long int)  tolua_tonumber(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'del'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->del(index);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'del'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: openDB of class  HiveArray */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveArray_openDB00
-static int tolua_liblua_HiveArray_openDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveArray",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveArray* self = (HiveArray*)  tolua_tousertype(tolua_S,1,0);
-  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'openDB'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->openDB(name);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'openDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: closeDB of class  HiveArray */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveArray_closeDB00
-static int tolua_liblua_HiveArray_closeDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveArray",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveArray* self = (HiveArray*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'closeDB'", NULL);
-#endif
-  {
-   self->closeDB();
-  }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'closeDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: set of class  HiveArray */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveArray_set00
-static int tolua_liblua_HiveArray_set00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveArray",0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,4,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveArray* self = (HiveArray*)  tolua_tousertype(tolua_S,1,0);
-  unsigned long long int index = (( unsigned long long int)  tolua_tonumber(tolua_S,2,0));
-  long long int value = (( long long int)  tolua_tonumber(tolua_S,3,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'set'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->set(index,value);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'set'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: openDB of class  HiveMap */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveMap_openDB00
-static int tolua_liblua_HiveMap_openDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveMap",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveMap* self = (HiveMap*)  tolua_tousertype(tolua_S,1,0);
-  const char* name = ((const char*)  tolua_tostring(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'openDB'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->openDB(name);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'openDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: closeDB of class  HiveMap */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveMap_closeDB00
-static int tolua_liblua_HiveMap_closeDB00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveMap",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveMap* self = (HiveMap*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'closeDB'", NULL);
-#endif
-  {
-   self->closeDB();
-  }
- }
- return 0;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'closeDB'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: set of class  HiveMap */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveMap_set00
-static int tolua_liblua_HiveMap_set00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveMap",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,5,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveMap* self = (HiveMap*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned long long int length = (( unsigned long long int)  tolua_tonumber(tolua_S,3,0));
-  long long int value = (( long long int)  tolua_tonumber(tolua_S,4,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'set'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->set(key,length,value);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'set'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: setn of class  HiveMap */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveMap_setn00
-static int tolua_liblua_HiveMap_setn00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveMap",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,5,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveMap* self = (HiveMap*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned long long int length = (( unsigned long long int)  tolua_tonumber(tolua_S,3,0));
-  long long int value = (( long long int)  tolua_tonumber(tolua_S,4,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'setn'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->setn(key,length,value);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'setn'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: replace of class  HiveMap */
-#ifndef TOLUA_DISABLE_tolua_liblua_HiveMap_replace00
-static int tolua_liblua_HiveMap_replace00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"HiveMap",0,&tolua_err) ||
-     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,3,0,&tolua_err) ||
-     !tolua_isstring(tolua_S,4,0,&tolua_err) ||
-     !tolua_isnumber(tolua_S,5,0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,6,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  HiveMap* self = (HiveMap*)  tolua_tousertype(tolua_S,1,0);
-  const char* key = ((const char*)  tolua_tostring(tolua_S,2,0));
-  unsigned long long int length = (( unsigned long long int)  tolua_tonumber(tolua_S,3,0));
-  const char* newKey = ((const char*)  tolua_tostring(tolua_S,4,0));
-  unsigned long long int newLength = (( unsigned long long int)  tolua_tonumber(tolua_S,5,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'replace'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->replace(key,length,newKey,newLength);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'replace'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
 /* function: getTimeStringUS */
 #ifndef TOLUA_DISABLE_tolua_liblua_getTimeStringUS00
 static int tolua_liblua_getTimeStringUS00(lua_State* tolua_S)
@@ -2726,270 +2002,6 @@ static int tolua_liblua_LuaNode_removeMD500(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
-/* method: createHiveKV of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_createHiveKV00
-static int tolua_liblua_LuaNode_createHiveKV00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'createHiveKV'", NULL);
-#endif
-  {
-   HiveKV* tolua_ret = (HiveKV*)  self->createHiveKV();
-    tolua_pushusertype(tolua_S,(void*)tolua_ret,"HiveKV");
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'createHiveKV'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: removeHiveKV of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_removeHiveKV00
-static int tolua_liblua_LuaNode_removeHiveKV00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isusertype(tolua_S,2,"HiveKV",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-  HiveKV* pHiveKV = ((HiveKV*)  tolua_tousertype(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'removeHiveKV'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->removeHiveKV(pHiveKV);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'removeHiveKV'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: createHiveBlock of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_createHiveBlock00
-static int tolua_liblua_LuaNode_createHiveBlock00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'createHiveBlock'", NULL);
-#endif
-  {
-   HiveBlock* tolua_ret = (HiveBlock*)  self->createHiveBlock();
-    tolua_pushusertype(tolua_S,(void*)tolua_ret,"HiveBlock");
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'createHiveBlock'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: removeHiveBlock of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_removeHiveBlock00
-static int tolua_liblua_LuaNode_removeHiveBlock00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isusertype(tolua_S,2,"HiveBlock",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-  HiveBlock* pHiveBlock = ((HiveBlock*)  tolua_tousertype(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'removeHiveBlock'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->removeHiveBlock(pHiveBlock);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'removeHiveBlock'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: createHiveArray of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_createHiveArray00
-static int tolua_liblua_LuaNode_createHiveArray00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'createHiveArray'", NULL);
-#endif
-  {
-   HiveArray* tolua_ret = (HiveArray*)  self->createHiveArray();
-    tolua_pushusertype(tolua_S,(void*)tolua_ret,"HiveArray");
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'createHiveArray'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: removeHiveArray of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_removeHiveArray00
-static int tolua_liblua_LuaNode_removeHiveArray00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isusertype(tolua_S,2,"HiveArray",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-  HiveArray* pHiveArray = ((HiveArray*)  tolua_tousertype(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'removeHiveArray'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->removeHiveArray(pHiveArray);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'removeHiveArray'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: createHiveMap of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_createHiveMap00
-static int tolua_liblua_LuaNode_createHiveMap00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,2,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'createHiveMap'", NULL);
-#endif
-  {
-   HiveMap* tolua_ret = (HiveMap*)  self->createHiveMap();
-    tolua_pushusertype(tolua_S,(void*)tolua_ret,"HiveMap");
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'createHiveMap'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
-/* method: removeHiveMap of class  LuaNode */
-#ifndef TOLUA_DISABLE_tolua_liblua_LuaNode_removeHiveMap00
-static int tolua_liblua_LuaNode_removeHiveMap00(lua_State* tolua_S)
-{
-#ifndef TOLUA_RELEASE
- tolua_Error tolua_err;
- if (
-     !tolua_isusertype(tolua_S,1,"LuaNode",0,&tolua_err) ||
-     !tolua_isusertype(tolua_S,2,"HiveMap",0,&tolua_err) ||
-     !tolua_isnoobj(tolua_S,3,&tolua_err)
- )
-  goto tolua_lerror;
- else
-#endif
- {
-  LuaNode* self = (LuaNode*)  tolua_tousertype(tolua_S,1,0);
-  HiveMap* pHiveMap = ((HiveMap*)  tolua_tousertype(tolua_S,2,0));
-#ifndef TOLUA_RELEASE
-  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'removeHiveMap'", NULL);
-#endif
-  {
-   bool tolua_ret = (bool)  self->removeHiveMap(pHiveMap);
-   tolua_pushboolean(tolua_S,(bool)tolua_ret);
-  }
- }
- return 1;
-#ifndef TOLUA_RELEASE
- tolua_lerror:
- tolua_error(tolua_S,"#ferror in function 'removeHiveMap'.",&tolua_err);
- return 0;
-#endif
-}
-#endif //#ifndef TOLUA_DISABLE
-
 /* Open function */
 TOLUA_API int tolua_liblua_open (lua_State* tolua_S)
 {
@@ -2997,28 +2009,19 @@ TOLUA_API int tolua_liblua_open (lua_State* tolua_S)
  tolua_reg_types(tolua_S);
  tolua_module(tolua_S,NULL,0);
  tolua_beginmodule(tolua_S,NULL);
-  tolua_constant(tolua_S,"SERVER_TYPE_ACCESS",SERVER_TYPE_ACCESS);
-  tolua_constant(tolua_S,"SERVER_TYPE_LOGIN",SERVER_TYPE_LOGIN);
-  tolua_constant(tolua_S,"SERVER_TYPE_ROUTE",SERVER_TYPE_ROUTE);
-  tolua_constant(tolua_S,"SERVER_TYPE_USER",SERVER_TYPE_USER);
-  tolua_constant(tolua_S,"SERVER_TYPE_DATA",SERVER_TYPE_DATA);
   tolua_constant(tolua_S,"COMMAND_CLIENT_REQUEST",COMMAND_CLIENT_REQUEST);
   tolua_constant(tolua_S,"COMMAND_HTTP_REQUEST",COMMAND_HTTP_REQUEST);
   tolua_constant(tolua_S,"COMMAND_NODE_REQUEST",COMMAND_NODE_REQUEST);
-  tolua_constant(tolua_S,"COMMAND_PUSH_USER_REQUEST",COMMAND_PUSH_USER_REQUEST);
-  tolua_constant(tolua_S,"COMMAND_BROADCAST_BEGIN",COMMAND_BROADCAST_BEGIN);
-  tolua_constant(tolua_S,"COMMAND_BROADCAST",COMMAND_BROADCAST);
-  tolua_constant(tolua_S,"COMMAND_BROADCAST_ONLINE_BEGIN",COMMAND_BROADCAST_ONLINE_BEGIN);
-  tolua_constant(tolua_S,"COMMAND_BROADCAST_ONLINE",COMMAND_BROADCAST_ONLINE);
   tolua_constant(tolua_S,"COMMAND_NODE_RESPONSE",COMMAND_NODE_RESPONSE);
+  tolua_constant(tolua_S,"COMMAND_NODE_ERROR",COMMAND_NODE_ERROR);
+  tolua_constant(tolua_S,"COMMAND_REQUEST_TIMEOUT",COMMAND_REQUEST_TIMEOUT);
+  tolua_constant(tolua_S,"COMMAND_BROADCAST",COMMAND_BROADCAST);
   tolua_cclass(tolua_S,"Node","Node","",NULL);
   tolua_beginmodule(tolua_S,"Node");
    tolua_function(tolua_S,"startTimer",tolua_liblua_Node_startTimer00);
    tolua_function(tolua_S,"removeTimer",tolua_liblua_Node_removeTimer00);
    tolua_function(tolua_S,"changeTimer",tolua_liblua_Node_changeTimer00);
    tolua_function(tolua_S,"getTimerLeft",tolua_liblua_Node_getTimerLeft00);
-   tolua_function(tolua_S,"pushUser",tolua_liblua_Node_pushUser00);
-   tolua_function(tolua_S,"broadcastOnline",tolua_liblua_Node_broadcastOnline00);
    tolua_function(tolua_S,"broadcast",tolua_liblua_Node_broadcast00);
    tolua_function(tolua_S,"sendRequest",tolua_liblua_Node_sendRequest00);
    tolua_function(tolua_S,"sendResponse",tolua_liblua_Node_sendResponse00);
@@ -3081,36 +2084,6 @@ TOLUA_API int tolua_liblua_open (lua_State* tolua_S)
    tolua_function(tolua_S,"closeRedis",tolua_liblua_DBRedis_closeRedis00);
    tolua_function(tolua_S,"identifyRedis",tolua_liblua_DBRedis_identifyRedis00);
   tolua_endmodule(tolua_S);
-  tolua_cclass(tolua_S,"HiveKV","HiveKV","",NULL);
-  tolua_beginmodule(tolua_S,"HiveKV");
-   tolua_function(tolua_S,"openDB",tolua_liblua_HiveKV_openDB00);
-   tolua_function(tolua_S,"closeDB",tolua_liblua_HiveKV_closeDB00);
-   tolua_function(tolua_S,"set",tolua_liblua_HiveKV_set00);
-   tolua_function(tolua_S,"setn",tolua_liblua_HiveKV_setn00);
-   tolua_function(tolua_S,"del",tolua_liblua_HiveKV_del00);
-   tolua_function(tolua_S,"replace",tolua_liblua_HiveKV_replace00);
-  tolua_endmodule(tolua_S);
-  tolua_cclass(tolua_S,"HiveBlock","HiveBlock","",NULL);
-  tolua_beginmodule(tolua_S,"HiveBlock");
-   tolua_function(tolua_S,"openDB",tolua_liblua_HiveBlock_openDB00);
-   tolua_function(tolua_S,"closeDB",tolua_liblua_HiveBlock_closeDB00);
-   tolua_function(tolua_S,"set",tolua_liblua_HiveBlock_set00);
-   tolua_function(tolua_S,"del",tolua_liblua_HiveBlock_del00);
-  tolua_endmodule(tolua_S);
-  tolua_cclass(tolua_S,"HiveArray","HiveArray","",NULL);
-  tolua_beginmodule(tolua_S,"HiveArray");
-   tolua_function(tolua_S,"openDB",tolua_liblua_HiveArray_openDB00);
-   tolua_function(tolua_S,"closeDB",tolua_liblua_HiveArray_closeDB00);
-   tolua_function(tolua_S,"set",tolua_liblua_HiveArray_set00);
-  tolua_endmodule(tolua_S);
-  tolua_cclass(tolua_S,"HiveMap","HiveMap","",NULL);
-  tolua_beginmodule(tolua_S,"HiveMap");
-   tolua_function(tolua_S,"openDB",tolua_liblua_HiveMap_openDB00);
-   tolua_function(tolua_S,"closeDB",tolua_liblua_HiveMap_closeDB00);
-   tolua_function(tolua_S,"set",tolua_liblua_HiveMap_set00);
-   tolua_function(tolua_S,"setn",tolua_liblua_HiveMap_setn00);
-   tolua_function(tolua_S,"replace",tolua_liblua_HiveMap_replace00);
-  tolua_endmodule(tolua_S);
   tolua_function(tolua_S,"getTimeStringUS",tolua_liblua_getTimeStringUS00);
   tolua_function(tolua_S,"writeLog",tolua_liblua_writeLog00);
   tolua_cclass(tolua_S,"LuaNode","LuaNode","Node",NULL);
@@ -3121,14 +2094,6 @@ TOLUA_API int tolua_liblua_open (lua_State* tolua_S)
    tolua_function(tolua_S,"removeMysql",tolua_liblua_LuaNode_removeMysql00);
    tolua_function(tolua_S,"createMD5",tolua_liblua_LuaNode_createMD500);
    tolua_function(tolua_S,"removeMD5",tolua_liblua_LuaNode_removeMD500);
-   tolua_function(tolua_S,"createHiveKV",tolua_liblua_LuaNode_createHiveKV00);
-   tolua_function(tolua_S,"removeHiveKV",tolua_liblua_LuaNode_removeHiveKV00);
-   tolua_function(tolua_S,"createHiveBlock",tolua_liblua_LuaNode_createHiveBlock00);
-   tolua_function(tolua_S,"removeHiveBlock",tolua_liblua_LuaNode_removeHiveBlock00);
-   tolua_function(tolua_S,"createHiveArray",tolua_liblua_LuaNode_createHiveArray00);
-   tolua_function(tolua_S,"removeHiveArray",tolua_liblua_LuaNode_removeHiveArray00);
-   tolua_function(tolua_S,"createHiveMap",tolua_liblua_LuaNode_createHiveMap00);
-   tolua_function(tolua_S,"removeHiveMap",tolua_liblua_LuaNode_removeHiveMap00);
   tolua_endmodule(tolua_S);
  tolua_endmodule(tolua_S);
  return 1;

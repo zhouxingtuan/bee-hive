@@ -60,7 +60,7 @@ int DBRedis::command(lua_State* tolua_S, bool skipResult){
 	m_argv.resize(queryNumber, NULL);
 	m_argvlen.resize(queryNumber, 0);
     // 从table数组中获取所有的执行字符串
-    for(int i=0; i<(int)queryNumber; ++i){
+    for(int i=0; i<queryNumber; ++i){
         lua_rawgeti(tolua_S, -1, i+1);
         m_argv[i] = ((char*)lua_tolstring(tolua_S,-1,&length));
         m_argvlen[i] = length;
@@ -84,7 +84,7 @@ void DBRedis::appendCommand(lua_State* tolua_S){
 	m_argv.resize(queryNumber, NULL);
 	m_argvlen.resize(queryNumber, 0);
     // 从table数组中获取所有的执行字符串
-    for(int i=0; i<(int)queryNumber; ++i){
+    for(int i=0; i<queryNumber; ++i){
         lua_rawgeti(tolua_S, -1, i+1);
         m_argv[i] = ((char*)lua_tolstring(tolua_S,-1,&length));
         m_argvlen[i] = length;

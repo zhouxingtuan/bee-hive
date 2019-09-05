@@ -20,15 +20,15 @@ LuaNode::~LuaNode(void){
 void LuaNode::onReceiveAccept(Accept* pAccept, Packet* pPacket){
 	uint32 command = pPacket->getCommand();
 	uint32 callbackID = pPacket->getCallback();
+	uint32 uid = pPacket->getUID();
 	DestinationHandle des = pPacket->getDestination();
 	DestinationHandle res = pPacket->getSource();
 	uint32 message = pPacket->getMessage();
-	uint32 uid = pPacket->getUID();
 	LOG_DEBUG("packet length=%d handle=%d node=%d command=%d callbackID=%d uid=%d desType=%d desIndex=%d resType=%d resIndex=%d message=0x%x",
 		pPacket->getLength(), pAccept->getHandle(), getNodeID(), command, callbackID, uid,
 		des.type, des.index, res.type, res.index, message);
 	m_pScript->pushFunction("onReceiveAccept");
-	m_pScript->pushNumber(pAccept->getHandle());
+	m_pScript->pushUserData(pAccept, "Accept");
 	m_pScript->pushString(pPacket->getBody(), pPacket->getBodyLength());
 	m_pScript->pushNumber(command);
 	m_pScript->pushNumber(callbackID);
@@ -43,21 +43,21 @@ void LuaNode::onReceiveAccept(Accept* pAccept, Packet* pPacket){
 void LuaNode::onCloseAccept(Accept* pAccept){
 	LOG_DEBUG("packet accept=%d node=%d", pAccept->getHandle(), getNodeID());
 	m_pScript->pushFunction("onCloseAccept");
-	m_pScript->pushNumber(pAccept->getHandle());
+	m_pScript->pushUserData(pAccept, "Accept");
 	m_pScript->executeFunction(0);
 }
 void LuaNode::onReceiveHttp(Http* pHttp, Packet* pPacket){
 	uint32 command = pPacket->getCommand();
 	uint32 callbackID = pPacket->getCallback();
+	uint32 uid = pPacket->getUID();
 	DestinationHandle des = pPacket->getDestination();
 	DestinationHandle res = pPacket->getSource();
 	uint32 message = pPacket->getMessage();
-	uint32 uid = pPacket->getUID();
 	LOG_DEBUG("packet length=%d handle=%d node=%d command=%d callbackID=%d uid=%d desType=%d desIndex=%d resType=%d resIndex=%d message=0x%x",
 		pPacket->getLength(), pHttp->getHandle(), getNodeID(), command, callbackID, uid,
 		des.type, des.index, res.type, res.index, message);
 	m_pScript->pushFunction("onReceiveHttp");
-	m_pScript->pushNumber(pHttp->getHandle());
+	m_pScript->pushUserData(pHttp, "Http");
 	m_pScript->pushString(pPacket->getBody(), pPacket->getBodyLength());
 	m_pScript->pushNumber(command);
 	m_pScript->pushNumber(callbackID);
@@ -72,7 +72,7 @@ void LuaNode::onReceiveHttp(Http* pHttp, Packet* pPacket){
 void LuaNode::onCloseHttp(Http* pHttp){
 	LOG_DEBUG("packet accept=%d node=%d", pHttp->getHandle(), getNodeID());
 	m_pScript->pushFunction("onCloseHttp");
-	m_pScript->pushNumber(pHttp->getHandle());
+	m_pScript->pushUserData(pHttp, "Http");
 	m_pScript->executeFunction(0);
 }
 void LuaNode::onCurlResponse(Buffer* pBuffer, uint32 callbackID, bool isRequestOK){

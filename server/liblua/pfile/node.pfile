@@ -9,24 +9,13 @@ typedef unsigned short  			uint16;
 typedef unsigned int    			uint32;
 typedef unsigned long long int  	uint64;
 
-// 预定义服务类型
-#define SERVER_TYPE_ACCESS 1
-#define SERVER_TYPE_LOGIN 2
-#define SERVER_TYPE_ROUTE 3
-#define SERVER_TYPE_USER 4
-#define SERVER_TYPE_DATA 5
-
 #define COMMAND_CLIENT_REQUEST 1
 #define COMMAND_HTTP_REQUEST 2
 #define COMMAND_NODE_REQUEST 3
-#define COMMAND_PUSH_USER_REQUEST 4
-
-#define COMMAND_BROADCAST_BEGIN 11
-#define COMMAND_BROADCAST 12
-#define COMMAND_BROADCAST_ONLINE_BEGIN 13
-#define COMMAND_BROADCAST_ONLINE 14
-
-#define COMMAND_NODE_RESPONSE 21
+#define COMMAND_NODE_RESPONSE 4
+#define COMMAND_NODE_ERROR 5
+#define COMMAND_REQUEST_TIMEOUT 6
+#define COMMAND_BROADCAST 7
 
 class Node
 {
@@ -35,14 +24,12 @@ class Node
     void changeTimer(uint32 handle, int64 timeCount);				        // 更改计时器的时间
     int64 getTimerLeft(uint32 handle);									    // 获取计时器剩余时间
 
-	bool pushUser(uint32 desID, uint32 message, uint32 uid, const char* ptr, uint32 length);
-	bool broadcastOnline(uint32 message, uint32 uid, const char* ptr, uint32 length);
 	bool broadcast(uint32 desType, uint32 message, uint32 uid, const char* ptr, uint32 length);
 	bool sendRequest(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length);
 	bool sendResponse(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length);
-	bool responseConnect(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length, uint32 connHandle);
-	const char* getConnectIP(uint32 connHandle);
-	bool closeConnect(uint32 connHandle);
+	bool responseConnect(uint32 desType, uint32 desID, uint32 message, uint32 callbackID, uint32 uid, const char* ptr, uint32 length, uint32 connType, uint32 connHandle);
+	const char* getConnectIP(uint32 connType, uint32 connHandle);
+	bool closeConnect(uint32 connType, uint32 connHandle);
 
 	uint32 hash(const char* str, uint32 length);
 	void encrypt(const char* str, uint32 length, std::string& result);

@@ -13,7 +13,7 @@
 #include "script.h"
 #include "dbmysql.h"
 #include "dbredis.h"
-#include "base.h"
+#include "md5.h"
 
 NS_HIVE_BEGIN
 
@@ -21,13 +21,6 @@ class LuaNode : public Node
 {
 public:
 	Script* m_pScript;
-	DBRedisPool* m_pDBRedisPool;
-	DBMysqlPool* m_pDBMysqlPool;
-	MD5Pool* m_pMD5Pool;
-	HiveKVPool* m_pHiveKVPool;
-	HiveBlockPool* m_pHiveBlockPool;
-	HiveArrayPool* m_pHiveArrayPool;
-	HiveMapPool* m_pHiveMapPool;
 public:
 	LuaNode(void);
 	virtual ~LuaNode(void);
@@ -43,14 +36,10 @@ public:
 	void onInitialize(const std::string& param);
 	void onDestroy(void);
 
-	DEFINE_CREATE_REMOVE_REDIS()
-	DEFINE_CREATE_REMOVE_MYSQL()
+	DEFINE_CREATE_REMOVE_REDIS();
+	DEFINE_CREATE_REMOVE_MYSQL();
 
-	DEFINE_CREATE_REMOVE_MD5()
-	DEFINE_CREATE_REMOVE(HiveKVPool, HiveKV)
-	DEFINE_CREATE_REMOVE(HiveBlockPool, HiveBlock)
-	DEFINE_CREATE_REMOVE(HiveArrayPool, HiveArray)
-	DEFINE_CREATE_REMOVE(HiveMapPool, HiveMap)
+	DEFINE_CREATE_REMOVE_MD5();
 
 	void initializeHandler(void);
 	void destroyHandler(void);

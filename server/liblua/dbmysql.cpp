@@ -42,7 +42,7 @@ bool DBMysql::pingMysql(void){
         return false;
     }
     if( mysql_ping(m_pMysql) ){
-        closeMysql();     // 释放mysql句柄
+        closeMysql();
         return false;
     }
     return true;
