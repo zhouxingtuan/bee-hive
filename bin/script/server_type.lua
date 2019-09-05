@@ -7,6 +7,8 @@
 --
 
 local server_type = {
-    test                = 1;
+    access              = 1;
+    user                = 2;
+    test                = 3;
 }
 return server_type

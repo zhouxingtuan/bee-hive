@@ -6,11 +6,8 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-local path = require("script.path")
-
 local config = {
 	log_level = "debug";	-- { "trace", "debug", "info", "warn", "error", "fatal" }
-	path = path;
 	groups = {
 
 	};

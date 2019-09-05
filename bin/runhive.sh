@@ -13,7 +13,7 @@ sleep 1
 #nohup ./hive hive.ini -print >> hive.log 2>&1 &
 ./hive hive.ini
 
-./hive hive_2.ini
+./hive hive2.ini
 
 ps -aux | grep hive
 

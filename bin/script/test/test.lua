@@ -22,6 +22,32 @@ function test:onInitialize(pNode, param)
 	self.m_pNode = pNode
 
 end
+function test:onRegister()
+
+end
+function test:onCloseConnect(pAccept, connType, connHandle)
+
+end
+function test:onRouteRequest(uid, msgID)
+	local desType,desID
+
+	return desType,desID
+end
+function test:onQueryUID(connType, connHandle)
+	local uid
+
+	return uid
+end
+function test:onQueryAccessID(uid)
+	local desID
+
+	return desID
+end
+function test:onQueryClientID(uid)
+	local desID
+
+	return desID
+end
 function test:onDestroy()
 
 end
