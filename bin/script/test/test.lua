@@ -9,7 +9,9 @@
 local math = math
 local os = os
 local require = require
+local server_type = require("server_type")
 local rpc = require("rpc")
+local timer = require("timer")
 
 local log_debug = log_debug
 local log_error = log_error
@@ -24,8 +26,10 @@ function test:onInitialize(pNode, param)
 
 end
 function test:onRegister()
-	log_debug("onRegister call on init or update")
+	log_debug("onRegister call on init or hotupdate")
+	rpc:register(0x3001, self, self.CallTest)
 
+	self:testMsg()
 end
 function test:onCloseConnect(pAccept, connType, connHandle)
 	log_debug("onCloseConnect connType", connType, "connHandle", connHandle)
@@ -55,6 +59,23 @@ function test:onDestroy()
 
 end
 
+
+-- ==================
+function test:testMsg()
+	timer:schedule(function()
+		local request = {
+			Test = "Hello World!";
+		}
+		local response = {}
+		log_debug("testMsg call 0x3001")
+		local result = rpc:request(server_type.test, 1, 0x3001, 100001, request, response, nil)
+		log_debug("testMsg call 0x3001", result, "response", response)
+	end, 2000, false)
+end
+function test:CallTest(request, response, rpcReq)
+	log_debug("CallTest uid", rpcReq.uid, "request", request)
+	response.Msg = "Welcome!"
+end
 
 
 return test

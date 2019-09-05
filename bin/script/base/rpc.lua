@@ -405,6 +405,12 @@ end
 -- 热更新，每个服务都会注册该消息协议
 function rpc:hotUpdate(request, response, rpcReq)
 	log_info("hotUpdate called", request)
+	package.loaded["hotupdate_start"] = nil
+	require("hotupdate_start")
+
+	package.loaded["protobuf"] = nil
+	protobuf = require("protobuf")
+
 	local config = require("config")
 	local p = "script."..config.moduleName..".init"
 	log_info("hotUpdate reload", p)
@@ -412,6 +418,8 @@ function rpc:hotUpdate(request, response, rpcReq)
 	require(p)
 	self:initRpcProto()
 	self:registerCall()
+	package.loaded["hotupdate_end"] = nil
+	require("hotupdate_end")
 	response.result = true
 end
 

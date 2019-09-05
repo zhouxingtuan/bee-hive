@@ -8,8 +8,10 @@
 
 local rpcproto = {
 	-- 系统使用命令
---	{0x98, "pb", "rpc.rpc_push", "rpc.rpc_empty"};
+	{0x98, "pb", "rpc.rpc_push", "rpc.rpc_empty"};
 	{0x99, "json", "", ""};
+
+	{0x3001, "json", "", ""};
 
 }
 
