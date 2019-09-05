@@ -26,6 +26,10 @@ class Node
 	uint32 getModuleIndex(void) const;
 	uint32 getModuleHandle(void) const;
 };
+
+
+
+
 -- ]]
 
 local tostring = tostring
@@ -42,6 +46,20 @@ function set_register_error_function(callback)
 	register_error = callback
 end
 
+local g_pNode = g_pNode
+local nodeID = g_pNode:getNodeID()
+local moduleType = g_pNode:getModuleType()
+local moduleIndex = g_pNode:getModuleIndex()
+
+local getTimeStringUS = getTimeStringUS
+local t = getTimeStringUS()
+local arr = { t, moduleType, moduleIndex, nodeID }
+local str = table.concat(arr, "_")
+local seed = g_pNode:hash(str, #str)
+local log_str = "current seed "..seed .. "\n"
+g_pNode:log(log_str)
+math.randomseed(seed)
+
 -- traceback
 function __G__TRACKBACK__(msg)
 	local traceMsg = debug.traceback()
@@ -52,6 +70,29 @@ function __G__TRACKBACK__(msg)
 end
 local __G__TRACKBACK__ = __G__TRACKBACK__
 local xpcall = xpcall
+
+function write_error_info(...)
+	local args = {... }
+	local str = table.concat(args, " ")
+	str = str .. "\n"
+	local file = "require_error.log"
+	local outfile = io.open(file, "a")
+	outfile:write(str)
+	outfile:flush()
+	outfile:close()
+end
+local write_error_info = write_error_info
+
+--old_require = require
+--local old_require = old_require
+--require = function(file)
+--	local result,err = pcall(old_require, file)
+--	if not result then
+--		write_error_info("require failed", file, err)
+--	else
+--		return err
+--	end
+--end
 
 local rpc
 
@@ -70,11 +111,11 @@ local initEnvironment = function()
 		package.path = package.path .. "./"..p.."/?.lua;"
 		package.cpath = package.cpath .. "./"..p.."/?.so;"
 	end
+	local log = require("log")
 	for _,p in ipairs(base_path) do
 		p = "script."..p..".init"
 		require(p)
 	end
-	local log = require("log")
 	log.level = config.logLevel or "trace"
 	log.maxFileSize = config.maxFileSize or log.maxFileSize
 	error_function = log_error
@@ -94,20 +135,21 @@ function onInitialize(pNode, param)
 		local log_file_name = moduleName.."_"..str..".log"
 		local log = require("log")
 		log.open(log_file_name)
+
 		return rpc:onInitialize(pNode, param)
 	end, __G__TRACKBACK__)
 end
 function onDestroy()
 	return xpcall(function() return rpc:onDestroy() end, __G__TRACKBACK__)
 end
-function onReceiveAccept(pAccept, buffer, command, callbackID, desType, desIndex, resType, resIndex, message)
-	return xpcall(function() return rpc:onReceiveAccept(pAccept, buffer, command, callbackID, desType, desIndex, resType, resIndex, message) end, __G__TRACKBACK__)
+function onReceiveAccept(pAccept, buffer, command, callbackID, desType, desIndex, resType, resIndex, message, uid)
+	return xpcall(function() return rpc:onReceiveAccept(pAccept, buffer, command, callbackID, desType, desIndex, resType, resIndex, message, uid) end, __G__TRACKBACK__)
 end
 function onCloseAccept(pAccept)
 	return xpcall(function() return rpc:onCloseAccept(pAccept) end, __G__TRACKBACK__)
 end
-function onReceiveHttp(pHttp, buffer, command, callbackID, desType, desIndex, resType, resIndex, message)
-	return xpcall(function() return rpc:onReceiveHttp(pHttp, buffer, command, callbackID, desType, desIndex, resType, resIndex, message) end, __G__TRACKBACK__)
+function onReceiveHttp(pHttp, buffer, command, callbackID, desType, desIndex, resType, resIndex, message, uid)
+	return xpcall(function() return rpc:onReceiveHttp(pHttp, buffer, command, callbackID, desType, desIndex, resType, resIndex, message, uid) end, __G__TRACKBACK__)
 end
 function onCloseHttp(pHttp)
 	return xpcall(function() return rpc:onCloseHttp(pHttp) end, __G__TRACKBACK__)
