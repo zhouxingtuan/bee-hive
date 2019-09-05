@@ -61,7 +61,7 @@ function rpc:onReceiveAccept(pAccept, buffer, command, callbackID, desType, desI
 		msgID = message;
 		uid = uid;
 	}
-	log_debug("onReceiveAccept", connType, connHandle, command, callbackID, desType, desIndex, resType, resIndex, outputMsgID(message))
+	log_debug("onReceiveAccept", connType, connHandle, command, callbackID, desType, desIndex, resType, resIndex, outputMsgID(message), uid)
 	return self:handleMessage(buffer, rpcReq)
 end
 function rpc:onCloseAccept(pAccept)
