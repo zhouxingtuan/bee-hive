@@ -29,8 +29,8 @@ void parseConfig(const char* fileName, Token::TokenMap& config){
 void loadConfig(Token::TokenMap& config){
 	// # the discovery node to join
 	const std::string&	hive_addr 			= config["hive_addr"];
-//	int 				hive_encrypt 		= atoi(config["hive_encrypt"].c_str());
-//	int 				hive_decrypt 		= atoi(config["hive_decrypt"].c_str());
+	int 				hive_encrypt 		= atoi(config["hive_encrypt"].c_str());
+	int 				hive_decrypt 		= atoi(config["hive_decrypt"].c_str());
 
 	// # the node id of current service (1-255)
 	int 				module_type 		= atoi(config["module_type"].c_str());
@@ -99,15 +99,15 @@ void loadConfig(Token::TokenMap& config){
 	pBeeHandler->setModuleName(module_name);
 	pBeeHandler->setModuleParam(module_param);
 	pBeeHandler->setLogFile(log_file);
-	MainWorker::getInstance()->setKey("d27796b6bcfb584ee678c7f74782d461");
-	MainWorker::getInstance()->setPassword("775b26b9c439ae11d878d7b637e83a18");
+	MainWorker::getInstance()->setKey("53598b87744db4cabe54ba4368eff747");
+	MainWorker::getInstance()->setPassword("22f100df9695ecaefd26e6a357eebf7f");
 
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST, onCommandBroadcast);
-	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST_ONLINE, onCommandBroadcastOnline);
-	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_PUSH_USER_REQUEST, onCommandDispatchByHandle);
+	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_ERROR, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_REQUEST, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_RESPONSE, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_CLIENT_REQUEST, onCommandDispatchByClient);
+	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_REQUEST_TIMEOUT, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_HTTP_REQUEST, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_PING, onCommandPing);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_PONG, onCommandPong);
@@ -120,8 +120,8 @@ void loadConfig(Token::TokenMap& config){
 
 	// record main init data
 	parseIPAndPort(hive_addr, pBeeHandler->m_hiveIP, pBeeHandler->m_hivePort);
-	pBeeHandler->m_hiveEncrypt = false;//(hive_encrypt > 0);
-	pBeeHandler->m_hiveDecrypt = false;//(hive_decrypt > 0);
+	pBeeHandler->m_hiveEncrypt = (hive_encrypt > 0);
+	pBeeHandler->m_hiveDecrypt = (hive_decrypt > 0);
 
 	if( !global_addr.empty() ){
 		parseIPAndPort(global_addr, pBeeHandler->m_globalIP, pBeeHandler->m_globalPort);

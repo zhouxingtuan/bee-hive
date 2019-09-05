@@ -120,9 +120,7 @@ bool BeeHandler::dispatchMessage(Packet* pPacket){
 		if(itCur != m_nodeMap.end()){
 			pPacket->retain();
 			m_packets.push_back(pPacket);
-			if( !TimerObject::isActive() || TimerObject::getTimerLeft() > 0 ){
-				setTimer(0);
-			}
+			setTimer(0);
 			return true;
 		}
 	}
@@ -210,7 +208,7 @@ void BeeHandler::identifyHive(Accept* pAccept){
 	uint32 t = time(NULL);
 	const std::string& password = MainWorker::getInstance()->getPassword();
 	sprintf(temp, "%04d-%d-%s", moduleHandle, t, password.c_str());
-	uint64 magic = binary_hash64(temp, strlen(temp));
+	uint64 magic = binary_djb_hash(temp, strlen(temp));
 	LOG_DEBUG("identifyHive to connectHandle=%d moduleHandle=%d str=%s magic=%llu", connectHandle, moduleHandle, temp, magic);
 	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + 16);
 	pPacket->retain();

@@ -26,8 +26,6 @@ void onCommandBeeOnline(Accept* pAccept, Packet* pPacket, uint32 command);
 void onCommandBeeOffline(Accept* pAccept, Packet* pPacket, uint32 command);
 void onCommandBroadcast(Accept* pAccept, Packet* pPacket, uint32 command);
 void onCommandBroadcastBegin(Accept* pAccept, Packet* pPacket, uint32 command);
-void onCommandBroadcastOnline(Accept* pAccept, Packet* pPacket, uint32 command);
-void onCommandBroadcastOnlineBegin(Accept* pAccept, Packet* pPacket, uint32 command);
 
 NS_HIVE_END
 

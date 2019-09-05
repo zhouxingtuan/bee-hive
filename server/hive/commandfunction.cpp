@@ -34,7 +34,7 @@ void onCommandRegister(Accept* pAccept, Packet* pPacket, uint32 command){
 	pPacket->readEnd();
 	const std::string& password = MainWorker::getInstance()->getPassword();
 	sprintf(temp, "%04d-%d-%s", nodeID, t, password.c_str());
-	uint64 magicHere = binary_hash64(temp, strlen(temp));
+	uint64 magicHere = binary_djb_hash(temp, strlen(temp));
 	LOG_DEBUG("onCommandRegister nodeID=%d str=%s magic=%llu magicHere=%llu", nodeID, temp, magic, magicHere);
 	if(magic != magicHere){
 		// response error message
@@ -152,30 +152,11 @@ void onCommandBroadcastBegin(Accept* pAccept, Packet* pPacket, uint32 command){
 	pPacket->setCommand(COMMAND_BROADCAST);
 	HiveHandler::getInstance()->broadcastDestination(destination.type, pPacket, true);
 }
-void onCommandBroadcastOnline(Accept* pAccept, Packet* pPacket, uint32 command){
-	DestinationHandle destination = pPacket->getDestination();
-	DestinationHandle source = pPacket->getSource();
-	uint32 message = pPacket->getMessage();
-	uint32 uid = pPacket->getUID();
-	LOG_DEBUG("handle=%d packet length=%d command=%d desType=%d desID=%d resType=%d resID=%d message=0x%x uid=%d",
-		pAccept->getHandle(), pPacket->getLength(), command, destination.type, destination.index, source.type, source.index, message, uid);
-	HiveHandler::getInstance()->broadcastDestination(destination.type, pPacket, false);
-}
-void onCommandBroadcastOnlineBegin(Accept* pAccept, Packet* pPacket, uint32 command){
-	DestinationHandle destination = pPacket->getDestination();
-	DestinationHandle source = pPacket->getSource();
-	uint32 message = pPacket->getMessage();
-	uint32 uid = pPacket->getUID();
-	LOG_DEBUG("handle=%d packet length=%d command=%d desType=%d desID=%d resType=%d resID=%d message=0x%x uid=%d",
-		pAccept->getHandle(), pPacket->getLength(), command, destination.type, destination.index, source.type, source.index, message, uid);
-	pPacket->setCommand(COMMAND_BROADCAST_ONLINE);
-	HiveHandler::getInstance()->broadcastDestination(destination.type, pPacket, true);
-}
 void onCommandDispatchByHandle(Accept* pAccept, Packet* pPacket, uint32 command){
 	DestinationHandle destination = pPacket->getDestination();
 	DestinationHandle source = pPacket->getSource();
 	uint32 message = pPacket->getMessage();
-	LOG_DEBUG("handle=%d packet length=%d command=%d desType=%d desID=%d resType=%d resID=%d message=0x%x uid=%d callbackID=%d",
+	LOG_INFO("handle=%d packet length=%d command=%d desType=%d desID=%d resType=%d resID=%d message=0x%x uid=%d callbackID=%d",
 		pAccept->getHandle(), pPacket->getLength(), command, destination.type, destination.index, source.type, source.index, message, pPacket->getUID(), pPacket->getCallback());
 	bool result = HiveHandler::getInstance()->sendToDestination(destination, pPacket);
 	if(!result){
@@ -197,12 +178,6 @@ void onCommandBeeRegister(Accept* pAccept, Packet* pPacket, uint32 command){
 	pPacket->readBegin();
 	pPacket->read(&moduleType, sizeof(moduleType));
 	pPacket->read(&moduleIndex, sizeof(moduleIndex));
-	DestinationHandle destination(moduleType, moduleIndex);
-	if( HiveHandler::getInstance()->isDestinationExisted(destination) ){
-		LOG_ERROR("destination is already existed in hive type=%d index=%d", destination.type, destination.index);
-		HiveHandler::getInstance()->notifyBeeKickoff(pAccept, destination);
-		return;
-	}
 	RefVector refIndexVector;
 	int arraySize = 0;
     pPacket->read(&arraySize, sizeof(arraySize));
@@ -212,6 +187,7 @@ void onCommandBeeRegister(Accept* pAccept, Packet* pPacket, uint32 command){
         refIndexVector.push_back(refIndex);
     }
 	pPacket->readEnd();
+	DestinationHandle destination(moduleType, moduleIndex);
 	HiveHandler::getInstance()->registerDestination(destination, moduleHandle, pAccept);
 	for(auto refIndex : refIndexVector){
 		HiveHandler::getInstance()->registerRefIndex(destination, refIndex);

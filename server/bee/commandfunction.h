@@ -22,7 +22,6 @@ void onCommandDispatchByClient(Accept* pAccept, Packet* pPacket, uint32 command)
 void onCommandBeeResponse(Accept* pAccept, Packet* pPacket, uint32 command);
 void onCommandBeeKickoff(Accept* pAccept, Packet* pPacket, uint32 command);
 void onCommandBroadcast(Accept* pAccept, Packet* pPacket, uint32 command);
-void onCommandBroadcastOnline(Accept* pAccept, Packet* pPacket, uint32 command);
 
 NS_HIVE_END
 

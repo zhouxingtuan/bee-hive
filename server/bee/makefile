@@ -33,9 +33,8 @@ OBJS = configloader.o commandfunction.o beehandler.o
 
 $(TARGET): main.o $(OBJS)
 	$(MAKE) -C ./../libcore
-	$(CC) $(DEBUG) main.o $(OBJS) $(STATIC_LIB) $(LIBPATH) $(LIBS) -o $(TARGET) $(CFLAGS)
-	cp $(TARGET) $(BIN)
-#	cp $(JEMALLOC_DLL_PATH)/libjemalloc.so.2 $(BIN)/lib
+	$(CC) $(DEBUG) main.o $(OBJS) $(STATIC_LIB) $(LIBPATH) $(LIBS) -o $(BIN)/$(TARGET) $(CFLAGS)
+	cp $(JEMALLOC_DLL_PATH)/libjemalloc.so.2 $(BIN)/lib
 
 main.o: main.cpp
 	$(CC) $(DEBUG) -c $< -o $@ $(CFLAGS)
@@ -51,7 +50,7 @@ beehandler.o:beehandler.cpp beehandler.h
 
 
 clean:
-	-$(RM) $(TARGET)
+	-$(RM) $(BIN)/$(TARGET)
 	-$(RM) *.o
 
 

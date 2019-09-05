@@ -13,7 +13,7 @@ NS_HIVE_BEGIN
 DEFINE_INSTANCE_CPP(HiveHandler)
 
 HiveHandler::HiveHandler(void) : Handler(), TimerObject(),
-    m_destID(0), m_destIP(""), m_destPort(0), m_destLocal(0), m_destEncrypt(false), m_destDecrypt(false),
+    m_destID(0), m_destIP(""), m_destPort(0), m_destEncrypt(false), m_destDecrypt(false),
     m_localIP(""), m_localPort(0), m_localEncrypt(false), m_localDecrypt(false),
     m_globalIP(""), m_globalPort(0), m_globalEncrypt(false), m_globalDecrypt(false) {
 
@@ -78,11 +78,11 @@ void HiveHandler::onInitialize(void){
 	openLocalListener();
 	openGlobalListener();
 	uint32 moduleHandle = getModuleHandle();
-	registerNode(moduleHandle, m_globalIP.c_str(), m_globalPort, m_localPort, m_globalEncrypt, m_globalDecrypt);
+	registerNode(moduleHandle, m_globalIP.c_str(), m_globalPort, m_globalEncrypt, m_globalDecrypt);
 	// register discovery node
-	registerNode(m_destID, m_destIP.c_str(), m_destPort, m_destLocal, m_destEncrypt, m_destDecrypt);
+	registerNode(m_destID, m_destIP.c_str(), m_destPort, m_destEncrypt, m_destDecrypt);
 	// set timer
-	setTimer(1000, NULL);
+	setTimer(CHECK_NODE_CONNECT_TIME);
 }
 void HiveHandler::identifyHive(Accept* pAccept){
 	char temp[256] = {0};
@@ -91,7 +91,7 @@ void HiveHandler::identifyHive(Accept* pAccept){
 	uint32 t = time(NULL);
 	const std::string& password = MainWorker::getInstance()->getPassword();
 	sprintf(temp, "%04d-%d-%s", moduleHandle, t, password.c_str());
-	uint64 magic = binary_hash64(temp, strlen(temp));
+	uint64 magic = binary_djb_hash(temp, strlen(temp));
 	LOG_DEBUG("identifyHive to connectHandle=%d moduleHandle=%d str=%s magic=%llu", connectHandle, moduleHandle, temp, magic);
 	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + 16);
 	pPacket->retain();
@@ -298,29 +298,6 @@ RefIndexVector* HiveHandler::getRefIndexVector(uint32 moduleType){
 	return &(m_typeRefIndex[moduleType]);
 }
 
-bool HiveHandler::isDestinationExisted(DestinationHandle destination){
-    if(destination.type > MAX_TYPE_INDEX){
-        LOG_ERROR("destination.type=%d > MAX_TYPE_INDEX=%d", destination.type, MAX_TYPE_INDEX);
-        return false;
-    }
-    if(destination.index > MAX_NODE_INDEX){
-        LOG_ERROR("destination.index=%d > MAX_NODE_INDEX=%d", destination.index, MAX_NODE_INDEX);
-        return false;
-    }
-	if(destination.type >= m_destinations.size()){
-		return false;
-	}
-	DestinationRouteVector& routeVec = m_destinations[destination.type];
-	if(destination.index >= routeVec.size()){
-		return false;
-	}
-	DestinationRoute& route = routeVec[destination.index];
-	if( route.nodeID == 0 ){
-		return false;
-	}
-	LOG_INFO("destination is already existed in hive type=%d index=%d node=%d", destination.type, destination.index, route.nodeID);
-	return true;
-}
 void HiveHandler::registerDestination(DestinationHandle destination, uint32 nodeID, Accept* pAccept){
     if(destination.type > MAX_TYPE_INDEX){
         LOG_ERROR("destination.type=%d > MAX_TYPE_INDEX=%d", destination.type, MAX_TYPE_INDEX);
@@ -361,7 +338,7 @@ void HiveHandler::unregisterDestination(DestinationHandle destination, bool noti
 					m_handleToDestination.erase(itCur);
 				}
 				// 发送命令通知这个进程退出
-				notifyBeeKickoff(pAccept, destination);
+//				notifyBeeKickoff(pAccept, destination);
 			}else{
 				pAccept->epollRemove();
 			}
@@ -414,9 +391,9 @@ bool HiveHandler::registerNode(const char* ptr){
 	regInfo.set(ptr);
 	return registerNode(regInfo);
 }
-bool HiveHandler::registerNode(uint32 id, const char* ip, uint16 port, uint16 localPort, bool encrypt, bool decrypt){
+bool HiveHandler::registerNode(uint32 id, const char* ip, uint16 port, bool encrypt, bool decrypt){
 	HiveInformation regInfo;
-	regInfo.set(id, ip, port, localPort, encrypt, decrypt);
+	regInfo.set(id, ip, port, encrypt, decrypt);
 	return registerNode(regInfo);
 }
 bool HiveHandler::registerNode(const HiveInformation& regInfo){
@@ -478,13 +455,8 @@ void HiveHandler::checkNodeConnect(uint32 id){
 		Client* pClient = getNodeClient(id);
 		if(NULL == pClient){
 			HiveInformation& info = m_hiveNodes[id];
-			if( strncmp(info.ip, m_globalIP.c_str(), IP_SIZE) == 0 ){
-				LOG_DEBUG("try to open client to node=%d ip=%s port=%d", id, "127.0.0.1", info.localPort);
-                pClient = MainWorker::getInstance()->openClient("127.0.0.1", info.localPort, info.encrypt, info.decrypt);
-			}else{
-				LOG_DEBUG("try to open client to node=%d ip=%s port=%d", id, info.ip, info.port);
-                pClient = MainWorker::getInstance()->openClient(info.ip, info.port, info.encrypt, info.decrypt);
-			}
+			LOG_DEBUG("try to open client to node=%d ip=%s port=%d", id, info.ip, info.port);
+			pClient = MainWorker::getInstance()->openClient(info.ip, info.port, info.encrypt, info.decrypt);
 			if(pClient == NULL){
 				LOG_ERROR("openClient failed node=%d ip=%s port=%d", id, info.ip, info.port);
 			}else{

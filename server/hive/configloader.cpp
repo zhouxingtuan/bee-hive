@@ -30,9 +30,8 @@ void loadConfig(Token::TokenMap& config){
 	// # the discovery node to join
 	int 				des_id 				= atoi(config["des_id"].c_str());
 	const std::string&	des_addr 			= config["des_addr"];
-	int 				des_local 			= atoi(config["des_local"].c_str());
-//	int 				des_encrypt 		= atoi(config["des_encrypt"].c_str());
-//	int 				des_decrypt 		= atoi(config["des_decrypt"].c_str());
+	int 				des_encrypt 		= atoi(config["des_encrypt"].c_str());
+	int 				des_decrypt 		= atoi(config["des_decrypt"].c_str());
 
 	// # the node id of current service (1-255)
 	int 				hive_id 			= atoi(config["hive_id"].c_str());
@@ -44,13 +43,13 @@ void loadConfig(Token::TokenMap& config){
 
 	// # local ip and port to connect for bee
 	const std::string& 	local_addr 			= config["local_addr"];
-//	int 				local_encrypt 		= atoi(config["local_encrypt"].c_str());
-//	int 				local_decrypt 		= atoi(config["local_decrypt"].c_str());
+	int 				local_encrypt 		= atoi(config["local_encrypt"].c_str());
+	int 				local_decrypt 		= atoi(config["local_decrypt"].c_str());
 
 	// # listen global ip and port for hive; start with 'global'
 	const std::string& 	global_addr 		= config["global_addr"];
-//	int 				global_encrypt 		= atoi(config["global_encrypt"].c_str());
-//	int 				global_decrypt 		= atoi(config["global_decrypt"].c_str());
+	int 				global_encrypt 		= atoi(config["global_encrypt"].c_str());
+	int 				global_decrypt 		= atoi(config["global_decrypt"].c_str());
 
 	// init the core
 	setLogLevel(log_level);
@@ -63,12 +62,11 @@ void loadConfig(Token::TokenMap& config){
 
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST, onCommandBroadcast);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST_BEGIN, onCommandBroadcastBegin);
-	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST_ONLINE, onCommandBroadcastOnline);
-	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BROADCAST_ONLINE_BEGIN, onCommandBroadcastOnlineBegin);
-	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_PUSH_USER_REQUEST, onCommandDispatchByHandle);
+	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_ERROR, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_REQUEST, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_NODE_RESPONSE, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_CLIENT_REQUEST, onCommandDispatchByHandle);
+	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_REQUEST_TIMEOUT, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_HTTP_REQUEST, onCommandDispatchByHandle);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_PING, onCommandPing);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_PONG, onCommandPong);
@@ -79,24 +77,23 @@ void loadConfig(Token::TokenMap& config){
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BEE_REGISTER, onCommandBeeRegister);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BEE_RESPONSE, onCommandBeeResponse);
 	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BEE_ONLINE, onCommandBeeOnline);
-	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BEE_OFFLINE, onCommandBeeOffline);
+//	MainWorker::getInstance()->setAcceptCommandFunction(COMMAND_BEE_OFFLINE, onCommandBeeOffline);
 
 	MainWorker::getInstance()->initialize(pHiveHandler);
 
 	// record main init data
 	pHiveHandler->m_destID = des_id;
-	pHiveHandler->m_destLocal = des_local;
 	parseIPAndPort(des_addr, pHiveHandler->m_destIP, pHiveHandler->m_destPort);
-	pHiveHandler->m_destEncrypt = false;//(des_encrypt > 0);
-	pHiveHandler->m_destDecrypt = false;//(des_decrypt > 0);
+	pHiveHandler->m_destEncrypt = (des_encrypt > 0);
+	pHiveHandler->m_destDecrypt = (des_decrypt > 0);
 
 	parseIPAndPort(local_addr, pHiveHandler->m_localIP, pHiveHandler->m_localPort);
-	pHiveHandler->m_localEncrypt = false;//(local_encrypt > 0);
-	pHiveHandler->m_localDecrypt = false;//(local_decrypt > 0);
+	pHiveHandler->m_localEncrypt = (local_encrypt > 0);
+	pHiveHandler->m_localDecrypt = (local_decrypt > 0);
 
 	parseIPAndPort(global_addr, pHiveHandler->m_globalIP, pHiveHandler->m_globalPort);
-	pHiveHandler->m_globalEncrypt = false;//(global_encrypt > 0);
-	pHiveHandler->m_globalDecrypt = false;//(global_decrypt > 0);
+	pHiveHandler->m_globalEncrypt = (global_encrypt > 0);
+	pHiveHandler->m_globalDecrypt = (global_decrypt > 0);
 
 	// 初始化
 	pHiveHandler->onInitialize();

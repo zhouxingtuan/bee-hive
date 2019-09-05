@@ -13,17 +13,16 @@
 
 NS_HIVE_BEGIN
 
-#define CHECK_NODE_CONNECT_TIME 3000
+#define CHECK_NODE_CONNECT_TIME 1000
 
-#define MAX_HIVE_NUMBER 4096
-#define MAX_TYPE_INDEX 4096
+#define MAX_HIVE_NUMBER 1024
+#define MAX_TYPE_INDEX 1024
 #define MAX_NODE_INDEX 10240
 
 typedef struct HiveInformation{
     uint32 id;
     char ip[IP_SIZE];//192.168.110.110 --> 16 byte
     uint16 port;
-    uint16 localPort;
     bool encrypt;
     bool decrypt;
     HiveInformation(void){
@@ -36,11 +35,10 @@ typedef struct HiveInformation{
     const char* get(void) const {
         return ((char*)(&id));
     }
-    void set(uint32 id, const char* ip, uint16 port, uint16 localPort, bool encrypt, bool decrypt){
+    void set(uint32 id, const char* ip, uint16 port, bool encrypt, bool decrypt){
         this->id = id;
         memcpy(this->ip, ip, IP_SIZE);
         this->port = port;
-        this->localPort = localPort;
         this->encrypt = encrypt;
         this->decrypt = decrypt;
     }
@@ -88,7 +86,6 @@ public:
 	uint32 m_destID;
 	std::string m_destIP;
 	uint16 m_destPort;
-	uint16 m_destLocal;
 	bool m_destEncrypt;
 	bool m_destDecrypt;
 
@@ -159,7 +156,6 @@ public:
 	DestinationRoute* getDestinationRouteByRefIndex(DestinationHandle destination);
 	RefIndexVector* getRefIndexVector(uint32 moduleType);
 
-	bool isDestinationExisted(DestinationHandle destination);
 	void registerDestination(DestinationHandle destination, uint32 nodeID, Accept* pAccept);
 	void unregisterDestination(DestinationHandle destination, bool notifyKickOff);
 	void resetDestination(DestinationHandle destination);
@@ -169,7 +165,7 @@ public:
 	void notifyBeeKickoff(Accept* pAccept, DestinationHandle destination);
 
 	bool registerNode(const char* ptr);
-	bool registerNode(uint32 id, const char* ip, uint16 port, uint16 localPort, bool encrypt, bool decrypt);
+	bool registerNode(uint32 id, const char* ip, uint16 port, bool encrypt, bool decrypt);
 	bool registerNode(const HiveInformation& regInfo);
 	bool unregisterNode(uint32 id);
 	void setNodeClient(uint32 id, Client* pClient);
