@@ -11,47 +11,56 @@
 NS_HIVE_BEGIN
 /*--------------------------------------------------------------------*/
 // 64-bit hash for 64-bit platforms
-uint64_t binary_murmur_hash64A ( const void * key, int len, unsigned int seed )
-{
-    const uint64_t m = 0xc6a4a7935bd1e995;
-    const int r = 47;
-
-    uint64_t h = seed ^ (len * m);
-
-    const uint64_t * data = (const uint64_t *)key;
-    const uint64_t * end = data + (len/8);
-
-    while(data != end)
-    {
-        uint64_t k = *data++;
-
-        k *= m;
-        k ^= k >> r;
-        k *= m;
-
-        h ^= k;
-        h *= m;
+//uint64_t binary_murmur_hash64A ( const void * key, int len, unsigned int seed )
+//{
+//    const uint64_t m = 0xc6a4a7935bd1e995;
+//    const int r = 47;
+//
+//    uint64_t h = seed ^ (len * m);
+//
+//    const uint64_t * data = (const uint64_t *)key;
+//    const uint64_t * end = data + (len/8);
+//
+//    while(data != end)
+//    {
+//        uint64_t k = *data++;
+//
+//        k *= m;
+//        k ^= k >> r;
+//        k *= m;
+//
+//        h ^= k;
+//        h *= m;
+//    }
+//
+//    const unsigned char * data2 = (const unsigned char*)data;
+//
+//    switch(len & 7)
+//    {
+//        case 7: h ^= uint64_t(data2[6]) << 48;
+//        case 6: h ^= uint64_t(data2[5]) << 40;
+//        case 5: h ^= uint64_t(data2[4]) << 32;
+//        case 4: h ^= uint64_t(data2[3]) << 24;
+//        case 3: h ^= uint64_t(data2[2]) << 16;
+//        case 2: h ^= uint64_t(data2[1]) << 8;
+//        case 1: h ^= uint64_t(data2[0]);
+//            h *= m;
+//    };
+//
+//    h ^= h >> r;
+//    h *= m;
+//    h ^= h >> r;
+//
+//    return h;
+//}
+unsigned int binary_djb_hash(const char* cstr, unsigned int length){
+    char* str = const_cast<char*>(cstr);
+    uint32_t hash = 5381;
+    while (length){
+        hash += (hash << 5) + (*str++);
+        --length;
     }
-
-    const unsigned char * data2 = (const unsigned char*)data;
-
-    switch(len & 7)
-    {
-        case 7: h ^= uint64_t(data2[6]) << 48;
-        case 6: h ^= uint64_t(data2[5]) << 40;
-        case 5: h ^= uint64_t(data2[4]) << 32;
-        case 4: h ^= uint64_t(data2[3]) << 24;
-        case 3: h ^= uint64_t(data2[2]) << 16;
-        case 2: h ^= uint64_t(data2[1]) << 8;
-        case 1: h ^= uint64_t(data2[0]);
-            h *= m;
-    };
-
-    h ^= h >> r;
-    h *= m;
-    h ^= h >> r;
-
-    return h;
+    return (hash & 0x7FFFFFFF);
 }
 // tiny加密
 void tiny_encrypt(uint32_t* v, uint32_t* k, uint32_t round){
@@ -130,6 +139,30 @@ Packet::Packet(Buffer* pBuffer) : RefObject(),m_pBuffer(pBuffer),m_cursor(0) {
 Packet::~Packet(void){
 	SAFE_RELEASE(m_pBuffer)
 }
+void Packet::convertHead(void){
+    PacketHead* pHead = getHead();
+    fprintf(stderr, "convertHead length=%d command=%d", pHead->length, pHead->command);
+    pHead->length = htonl(pHead->length);
+    pHead->command = htonl(pHead->command);
+    pHead->callback = htonl(pHead->callback);
+    pHead->destination = htonl(pHead->destination.getHandle());
+    pHead->source = htonl(pHead->source.getHandle());
+    pHead->message = htonl(pHead->message);
+    pHead->uid = htonl(pHead->uid);
+    fprintf(stderr, "convertHead length=%d command=%d", pHead->length, pHead->command);
+}
+void Packet::reverseHead(void){
+    PacketHead* pHead = getHead();
+    fprintf(stderr, "reverseHead length=%d command=%d", pHead->length, pHead->command);
+    pHead->length = ntohl(pHead->length);
+    pHead->command = ntohl(pHead->command);
+    pHead->callback = ntohl(pHead->callback);
+    pHead->destination = ntohl(pHead->destination.getHandle());
+    pHead->source = ntohl(pHead->source.getHandle());
+    pHead->message = ntohl(pHead->message);
+    pHead->uid = ntohl(pHead->uid);
+    fprintf(stderr, "reverseHead length=%d command=%d", pHead->length, pHead->command);
+}
 /*--------------------------------------------------------------------*/
 int GetLastSocketError()
 {
@@ -183,7 +216,7 @@ void Client::identifyHive(void){
 	uint32_t nodeID = rand();
 	const std::string& password = getPassword();
 	sprintf(temp, "%04d-%d-%s", nodeID, t, password.c_str());
-	uint64_t magic = binary_hash64(temp, (int)strlen(temp));
+	uint64_t magic = binary_djb_hash(temp, (int)strlen(temp));
 	fprintf(stderr, "identifyHive nodeID=%d str=%s magic=%llu\n", nodeID, temp, magic);
 	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + 16);
 	pPacket->retain();
@@ -271,6 +304,24 @@ int Client::threadFunction(void){
 	    }
 	};
 	return 0;
+}
+void Client::updateEvent(void){
+    dispatchConnectEvent();
+    switch(m_currentConnectState){
+        case 1:{
+            if( !trySelectSocket() ){
+                fprintf(stderr, "select failed. client out ...\n");
+                removeSocket();
+                addClientEvent(CLIENT_EVENT_CONN_OUT, NULL);
+            }
+            break;
+        }
+        default:{
+//            std::chrono::milliseconds dura(5);
+//            std::this_thread::sleep_for(dura);
+            break;
+        }
+    }
 }
 void Client::dispatchPacket(Packet* pPacket){
 	if( this->isNeedDecrypt() && pPacket->getLength() >= (int)PACKET_HEAD_LENGTH ){
@@ -543,7 +594,7 @@ bool Client::onParsePacket(char* recvBuffer, int nread){
 		if( isNeedDecrypt() ){
 			binary_decrypt(recvBufferPtr, PACKET_HEAD_LENGTH_PROTECT, getKey().c_str());
 		}
-		packetLength = ((PacketHead*)(recvBufferPtr))->length;
+		packetLength = ntohl(((PacketHead*)(recvBufferPtr))->length);
 		if( packetLength < (int)PACKET_HEAD_LENGTH ){
 			fprintf(stderr, "head length is invalid packetLength=%d left=%d \n", packetLength, (int)(nread-(recvBufferPtr-recvBuffer)));
 			m_tempReadPacket = NULL;
@@ -555,6 +606,7 @@ bool Client::onParsePacket(char* recvBuffer, int nread){
 		pPacket = new Packet(packetLength);
 		pPacket->retain();	// 如果数据没有全部收到，那么m_tempReadPacket会保持这个retain状态
 		pPacket->write( recvBufferPtr, writeLength );
+		pPacket->reverseHead();
 		recvBufferPtr += writeLength;
 		if( pPacket->isReceiveEnd() ){
 			// 派发消息给对应的消息处理器
@@ -608,6 +660,7 @@ bool Client::writePacket(void){
 bool Client::writeSocket(Packet* pPacket){
 	// 检查是否已经经过加密操作
 	if( pPacket->getBuffer()->checkEncryptFlag() ){
+	    pPacket->convertHead();
 		if( this->isNeedEncrypt() ){
             binary_encrypt(pPacket->getDataPtr(), PACKET_HEAD_LENGTH_PROTECT, this->getKey().c_str());
             binary_encrypt(pPacket->getBody(), pPacket->getBodyLength(), this->getKey().c_str());
@@ -705,7 +758,9 @@ bool Client::connectServer(void) {
 	hints.ai_socktype = SOCK_STREAM;
 	result = getaddrinfo(m_ip.c_str(), port_str, &hints, &res);
 	if (result) {
-		freeaddrinfo(res);	// 记得释放
+//        if(NULL != res){
+//            freeaddrinfo(res);	// 记得释放
+//        }
 		return false;
 	}
 	for (ptr = res; ptr != NULL; ptr = ptr->ai_next) {
@@ -720,7 +775,9 @@ bool Client::connectServer(void) {
 		}
 		break;	// we got one conn
 	}
-	freeaddrinfo(res);	// 记得释放
+	if(NULL != res){
+	    freeaddrinfo(res);	// 记得释放
+	}
 	if (fd < 0) {
 		return false;
 	}

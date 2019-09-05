@@ -88,9 +88,11 @@ typedef unsigned int uint32_t;
 //#ifndef uint64_t
 //typedef unsigned long long int uint64_t;
 //#endif
-#define BINARY_HASH_SEED 5381
-uint64_t binary_murmur_hash64A( const void * key, int len, unsigned int seed=BINARY_HASH_SEED );	// 64-bit hash for 64-bit platforms
-#define binary_hash64 binary_murmur_hash64A
+//#define BINARY_HASH_SEED 5381
+//uint64_t binary_murmur_hash64A( const void * key, int len, unsigned int seed=BINARY_HASH_SEED );	// 64-bit hash for 64-bit platforms
+//#define binary_hash64 binary_murmur_hash64A
+uint32_t binary_djb_hash(const char* cstr, unsigned int length);
+
 /*--------------------------------------------------------------------*/
 // 拥有同步互斥量的类
 
@@ -217,8 +219,8 @@ public:
 }DestinationHandle;
 // 服务间传递消息的头部数据结构
 typedef struct PacketHead {
-	int length : 24;                // 3 包的长度，传递的数据在8M以内
-	unsigned int command : 8;       // 1 消息的类型
+	int length;                     // 4 包的长度，传递的数据在8M以内
+	unsigned int command;           // 4 消息的类型
 	unsigned int callback;          // 4 返回的回调ID
 	DestinationHandle destination;  // 4 目标服务
 	DestinationHandle source;       // 4 源头服务
@@ -235,6 +237,9 @@ public:
     explicit Packet(int bufferSize);
     explicit Packet(Buffer* pBuffer);
     virtual ~Packet(void);
+
+    void convertHead(void);
+    void reverseHead(void);
 
 	inline void setCursorToEnd(void){ m_cursor = getLength(); }
 	inline void setCursor(int cur){ m_cursor = cur; }
@@ -366,6 +371,7 @@ public:
 	virtual int threadFunction(void);
 
 	virtual void dispatchEvent(void);	// 这个函数需要在主循环中调用，用来分发事件
+	virtual void updateEvent(void);     // 单线程时在主线程进行update操作
 
 	// 6 <= command <= 255
 	virtual bool sendData(unsigned int message, unsigned int callbackID, unsigned int uid, const char* pData, unsigned int length);

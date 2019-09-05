@@ -59,12 +59,13 @@ int main(int argc, char *argv[])
 	pClient->retain();
 
 	pClient->setNotifyInterface(pNotify);
-	pClient->setKey("1234567890123456");
-	pClient->setPassword("123456");
+	pClient->setKey("d27796b6bcfb584ee678c7f74782d461");
+	pClient->setPassword("775b26b9c439ae11d878d7b637e83a18");
 	pClient->setIsNeedEncrypt(true);
 	pClient->setIsNeedDecrypt(true);
-	pClient->setSocket("127.0.0.1", 9902);
+	pClient->setSocket("127.0.0.1", 20001);
 	pClient->startThread();		// 这个函数开启新的线程建立连接
+	pClient->startConnectEvent();
 
 	while(true){
 		std::chrono::milliseconds timespan(1*1000); // or whatever
