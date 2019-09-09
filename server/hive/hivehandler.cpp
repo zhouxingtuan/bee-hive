@@ -92,7 +92,7 @@ void HiveHandler::identifyHive(Accept* pAccept){
 	const std::string& password = MainWorker::getInstance()->getPassword();
 	sprintf(temp, "%04d-%d-%s", moduleHandle, t, password.c_str());
 	uint32 magic = binary_djb_hash(temp, strlen(temp));
-	LOG_DEBUG("identifyHive to connectHandle=%d moduleHandle=%d str=%s magic=%llu", connectHandle, moduleHandle, temp, magic);
+	LOG_DEBUG("identifyHive to connectHandle=%d moduleHandle=%d str=%s magic=%d", connectHandle, moduleHandle, temp, magic);
     uint32 n_moduleHandle = htonl(moduleHandle);
     uint32 n_t = htonl(t);
     uint32 n_magic = htonl(magic);
