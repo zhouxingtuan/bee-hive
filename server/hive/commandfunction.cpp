@@ -26,16 +26,19 @@ void onCommandRegister(Accept* pAccept, Packet* pPacket, uint32 command){
 	char temp[256] = {0};
 	uint32 nodeID = 0;
 	uint32 t = 0;
-	uint64 magic = 0;
+	uint32 magic = 0;
 	pPacket->readBegin();
 	pPacket->read(&nodeID, sizeof(uint32));
 	pPacket->read(&t, sizeof(uint32));
-	pPacket->read(&magic, sizeof(uint64));
+	pPacket->read(&magic, sizeof(uint32));
 	pPacket->readEnd();
+    nodeID = ntohl(nodeID);
+    t = ntohl(t);
+    magic = ntohl(magic);
 	const std::string& password = MainWorker::getInstance()->getPassword();
 	sprintf(temp, "%04d-%d-%s", nodeID, t, password.c_str());
-	uint64 magicHere = binary_djb_hash(temp, strlen(temp));
-	LOG_DEBUG("onCommandRegister nodeID=%d str=%s magic=%llu magicHere=%llu", nodeID, temp, magic, magicHere);
+	uint32 magicHere = binary_djb_hash(temp, strlen(temp));
+	LOG_DEBUG("onCommandRegister nodeID=%d str=%s magic=%d magicHere=%d", nodeID, temp, magic, magicHere);
 	if(magic != magicHere){
 		// response error message
 		Packet* pResponse = new Packet(PACKET_HEAD_LENGTH);
