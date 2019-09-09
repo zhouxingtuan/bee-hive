@@ -209,10 +209,10 @@ void Client::identifyHive(void){
 	char temp[256] = {0};
 	unsigned int t = (unsigned int)time(NULL);
 	srand(t);
-	uint32 nodeID = rand();
+	unsigned int nodeID = rand();
 	const std::string& password = getPassword();
 	sprintf(temp, "%04d-%d-%s", nodeID, t, password.c_str());
-	uint32 magic = binary_djb_hash(temp, (int)strlen(temp));
+	unsigned int magic = binary_djb_hash(temp, (int)strlen(temp));
 	fprintf(stderr, "identifyHive nodeID=%d str=%s magic=%d\n", nodeID, temp, magic);
     nodeID = htonl(nodeID);
     t = htonl(t);
@@ -220,9 +220,9 @@ void Client::identifyHive(void){
 	Packet* pPacket = new Packet(PACKET_HEAD_LENGTH + 16);
 	pPacket->retain();
 	pPacket->writeBegin(COMMAND_REGISTER);
-	pPacket->write(&nodeID, sizeof(uint32));
-	pPacket->write(&t, sizeof(uint32));
-	pPacket->write(&magic, sizeof(uint32));
+	pPacket->write(&nodeID, sizeof(unsigned int));
+	pPacket->write(&t, sizeof(unsigned int));
+	pPacket->write(&magic, sizeof(unsigned int));
 	pPacket->writeEnd();
 	bool result = receivePacket(pPacket);
 	fprintf(stderr, "identifyHive to server command=%d result=%d\n", pPacket->getCommand(), result);
