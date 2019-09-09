@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	pClient->setPassword("775b26b9c439ae11d878d7b637e83a18");
 	pClient->setIsNeedEncrypt(true);
 	pClient->setIsNeedDecrypt(true);
-	pClient->setSocket("127.0.0.1", 20001);
+	pClient->setSocket("127.0.0.1", 20011);
 	pClient->startThread();		// 这个函数开启新的线程建立连接
 	pClient->startConnectEvent();
 
