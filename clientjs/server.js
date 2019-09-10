@@ -90,7 +90,21 @@ function _connect(wsUrl){
         onOpen: function (e) {
             _connectState = 2;
             console.log("connect OK " + wsUrl);
-            _emit("ServerConnectOpen", wsUrl);
+            // 先发送消息验证连接
+            var obj = {
+                messageID : 0x123,
+                body : new ArrayBuffer(0),
+                onMessage: function(messageID, body){
+                    console.log("messageID 0x"+messageID.toString(16)+" body: "+body);
+                    _emit("ServerConnectOpen", wsUrl);
+                },
+                onTimeout: function(){
+                    console.log("0x"+this.messageID.toString(16)+" request failed ");
+                    _disconnect();
+                }
+            };
+            _send(obj);
+            //_emit("ServerConnectOpen", wsUrl);
         },
         onClose: function (e) {
             _connectState = 0;
