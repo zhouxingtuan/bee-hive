@@ -257,9 +257,10 @@ function _djb_hash(chars){
    if (!Array.isArray(chars)) {
        throw new Error('input must be a string or an array');
    }
-   return chars.reduce(function(prev, curr){
+   var h = chars.reduce(function(prev, curr){
        return ((prev << 5) + prev) + curr;
    }, 5381);
+   return (h & 0x7FFFFFFF);
 }
 function _time(){ return Date.parse( new Date())/1000; }
 function _timems() { return new Date().getTime(); }
@@ -278,6 +279,7 @@ function _str2abOffset(str, buf, offset){
        bufView[offset+i] = str.charCodeAt(i);
    }
 }
+function _isArrayBuffer(mix){ return Object.prototype.toString.call(mix) === "[object ArrayBuffer]"; }
 
 return server;
 });
