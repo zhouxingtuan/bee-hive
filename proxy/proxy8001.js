@@ -4,7 +4,7 @@ var access_port = 30005;
 var listen_host = "192.168.50.184";
 var listen_port = 8001;
 
-const password = "22f100df9695ecaefd26e6a357eebf7f";
+const password = "775b26b9c439ae11d878d7b637e83a18";
 const COMMAND_REGISTER = 253;
 const COMMAND_CLIENT_REQUEST = 1;
 
