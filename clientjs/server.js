@@ -243,7 +243,7 @@ function _emit(id, data){
             for(var i=0,l=targetArray.length; i<l; ++i){
                 var target = targetArray[i];
                 var callback = target[name];
-                callback.call(target, id, data);
+                callback.call(target, data);
             }
         }
     }
