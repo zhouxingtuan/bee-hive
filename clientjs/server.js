@@ -37,6 +37,12 @@ var server = {
     off: _off,    //
     emit: _emit,    //
     djb_hash: _djb_hash,
+    time: _time,
+    timems: _timems,
+    ab2str: _ab2str,
+    str2ab: _str2ab,
+    str2abOffset: _str2abOffset,
+    isArrayBuffer: _isArrayBuffer,
 };
 var _wsUrl = null,
     _wsObj = null,
@@ -95,7 +101,7 @@ function _connect(wsUrl){
                 messageID : 0x123,
                 body : new ArrayBuffer(0),
                 onMessage: function(messageID, body){
-                    console.log("messageID 0x"+messageID.toString(16)+" body: "+body);
+                    console.log("messageID identify back 0x"+messageID.toString(16)+" body: "+body);
                     _emit("ServerConnectOpen", wsUrl);
                 },
                 onTimeout: function(){
@@ -143,15 +149,16 @@ function _send(obj){
     if(typeof body === "string"){
         body = _str2ab(body);
     }
+    var body_view = new DataView(body);
     var send_buf = new ArrayBuffer(8 + body.byteLength);
     var view = new DataView(send_buf);
     view.setUint32(0, callbackID);
     view.setUint32(4, messageID);
     for(var i=0; i<body.byteLength; ++i){
-        view.setUint8(8+i, body[i]);
+        view.setUint8(8+i, body_view.getUint8(i));
     }
     _wsObj.send(send_buf);
-    console.log("send " + (typeof send_buf));
+    console.log("send body length " + body.byteLength);
 }
 function _disconnect(){
     _wsUrl = null;
