@@ -1,5 +1,6 @@
 
-var wsUrl = "ws://192.168.50.184:8001"
+// 40001 - 40004
+var wsUrl = "ws://47.116.22.137:40001"
 server.connect(wsUrl)
 
 var WBListener = {
